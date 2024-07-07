@@ -76,3 +76,4 @@ Example : `npm run seqeulize --workspace=api -- --db:migrate`
    - For larger projects, consider organizing files by features/modules (Feature-Based Structure) or layer-based (Layered Structure).
 
 test-Nico
+test-farah
