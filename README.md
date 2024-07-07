@@ -78,3 +78,4 @@ Example : `npm run seqeulize --workspace=api -- --db:migrate`
 test-Nico
 test-farah
 c1
+c2
