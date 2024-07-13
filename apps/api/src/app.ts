@@ -5,17 +5,17 @@ import express, {
   Request,
   Response,
   NextFunction,
-  Router,
 } from 'express';
 import cors from 'cors';
 import { PORT } from './config';
-import { SampleRouter } from './routers/sample.router';
+import { UserRouter } from './routers/user.router';
 
 export default class App {
   private app: Express;
 
   constructor() {
     this.app = express();
+
     this.configure();
     this.routes();
     this.handleError();
@@ -28,36 +28,20 @@ export default class App {
   }
 
   private handleError(): void {
-    // not found
-    this.app.use((req: Request, res: Response, next: NextFunction) => {
-      if (req.path.includes('/api/')) {
-        res.status(404).send('Not found !');
-      } else {
-        next();
-      }
-    });
-
-    // error
     this.app.use(
       (err: Error, req: Request, res: Response, next: NextFunction) => {
-        if (req.path.includes('/api/')) {
-          console.error('Error : ', err.stack);
-          res.status(500).send('Error !');
-        } else {
-          next();
-        }
+        console.log(err.message);
+        res.status(500).send(err.message);
       },
     );
   }
 
   private routes(): void {
-    const sampleRouter = new SampleRouter();
+    const routers = [new UserRouter()];
 
-    this.app.get('/api', (req: Request, res: Response) => {
-      res.send(`Hello, Purwadhika Student API!`);
+    routers.forEach((router) => {
+      this.app.use('/api', router.getRouter());
     });
-
-    this.app.use('/api/samples', sampleRouter.getRouter());
   }
 
   public start(): void {

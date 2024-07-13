@@ -1,5 +1,6 @@
 'use client';
 
+import React, { useState } from 'react';
 import { Formik, Form, Field, FormikProps } from 'formik';
 import * as Yup from 'yup';
 
@@ -15,8 +16,14 @@ import {
   FormHelperText,
   MenuItem,
   Select,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
 } from '@mui/material';
 import { useRouter } from 'next/navigation';
+import axios from 'axios';
 
 const registrationSchema = Yup.object({
   username: Yup.string().required('Username is required'),
@@ -42,13 +49,60 @@ const initialValues: IRegister = {
   referral: '',
 };
 
+// NETWORK CALL
+const userRegister = async ({
+  username,
+  email,
+  firstName,
+  lastName,
+  accountType,
+  password,
+  referral = '',
+}: IRegister) => {
+  const user = await axios.post('http://localhost:8000/api/register', {
+    username,
+    email,
+    first_name: firstName,
+    last_name: lastName,
+    role_id: Number(accountType),
+    password,
+    referral_code: referral,
+  });
+  return user;
+};
+
 function Register() {
   const router = useRouter();
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [open, setOpen] = useState(false);
 
-  const handleSubmit = (values: any) => {
-    console.log('Form data:', values);
+  const handleSubmit = async (values: IRegister) => {
+    try {
+      setErrorMessage(null);
+      setOpen(false);
+      await userRegister(values);
+      router.push('/success-register');
+    } catch (error: any) {
+      if (axios.isAxiosError(error) && error.response) {
+        const { status, data } = error.response;
+        if (status === 500 && data === 'Username or email already exists') {
+          setErrorMessage('Username or email is already registered');
+        } else {
+          setErrorMessage(
+            'An unexpected error occurred. Please try again later.',
+          );
+        }
+      } else {
+        setErrorMessage(
+          'An unexpected error occurred. Please try again later.',
+        );
+      }
+      setOpen(true);
+    }
+  };
 
-    router.push('/success-register');
+  const handleClose = () => {
+    setOpen(false);
   };
 
   return (
@@ -155,7 +209,7 @@ function Register() {
                     <InputLabel id="accountType-label">Account Type</InputLabel>
                     <Field
                       as={Select}
-                      labelId="accoutType=label"
+                      labelId="accountType-label"
                       id="accountType"
                       name="accountType"
                       label="Account Type"
@@ -163,10 +217,8 @@ function Register() {
                         setFieldValue('accountType', e.target.value);
                       }}
                     >
-                      <MenuItem value="User">User</MenuItem>
-                      <MenuItem value="Event Organizer">
-                        Event Organizer
-                      </MenuItem>
+                      <MenuItem value="1">User</MenuItem>
+                      <MenuItem value="2">Event Organizer</MenuItem>
                     </Field>
                     <FormHelperText>
                       {touched.accountType && errors.accountType}
@@ -213,6 +265,24 @@ function Register() {
           }}
         </Formik>
       </Box>
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">{'Oopss...'}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            {errorMessage}
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose} color="primary" autoFocus>
+            OK
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Container>
   );
 }
