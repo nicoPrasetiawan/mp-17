@@ -1,9 +1,11 @@
 import { UserController } from '@/controllers/user.controller';
 import { Router } from 'express';
+import { AuthMiddleware } from '@/middlewares/auth.middleware';
 
 export class UserRouter {
   private router: Router = Router();
   private userController = new UserController();
+  private auth = new AuthMiddleware();
 
   constructor() {
     this.initializeRoutes();
@@ -11,8 +13,13 @@ export class UserRouter {
 
   private initializeRoutes(): void {
     this.router.post('/register', this.userController.createUser);
+    this.router.post('/login', this.userController.login);
     this.router.get('/users', this.userController.getUsers);
-    this.router.get('/user/:user_id', this.userController.getUser);
+    this.router.get(
+      '/user/profile',
+      this.auth.verifyToken,
+      this.userController.getUser,
+    );
   }
 
   getRouter(): Router {
