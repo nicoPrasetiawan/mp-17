@@ -1,6 +1,18 @@
 import prisma from '@/prisma';
 import { IUser } from '@/interfaces/user.interface';
 
+// Function to generate a random string
+function generateReferralCode(length: number) {
+  const characters =
+    'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let result = '';
+  const charactersLength = characters.length;
+  for (let i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+  return result;
+}
+
 class UserAction {
   findUserByEmailOrUsername = async (username: string, email: string) => {
     try {
@@ -51,6 +63,20 @@ class UserAction {
       const isDuplicate = await this.findUserByEmailOrUsername(username, email);
       if (isDuplicate) throw new Error('Username or email already exists');
 
+      // Check if the provided referral_code exists
+      if (referral_code) {
+        const referrer = await prisma.user.findUnique({
+          where: { own_referral_code: referral_code },
+        });
+
+        if (!referrer) {
+          throw new Error('Invalid referrer code');
+        }
+      }
+
+      // Generate a new unique referral code for the user
+      const ownReferralCode = generateReferralCode(5);
+
       const user = await prisma.user.create({
         data: {
           username,
@@ -59,6 +85,7 @@ class UserAction {
           first_name,
           last_name,
           referral_code: referral_code || null, // Handle optional fields
+          own_referral_code: ownReferralCode,
           point_balance,
           role_id,
         },
