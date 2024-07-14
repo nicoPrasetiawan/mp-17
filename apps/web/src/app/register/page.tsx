@@ -36,7 +36,9 @@ const registrationSchema = Yup.object({
   password: Yup.string()
     .required('Password is required')
     .min(5, 'Password must be at least 5 characters'),
-  referral: Yup.string(),
+  referral: Yup.string()
+    .max(5, 'Referral code can be a maximum of 5 characters')
+    .uppercase('Referral code must be in uppercase'),
 });
 
 const initialValues: IRegister = {
@@ -85,7 +87,12 @@ function Register() {
     } catch (error: any) {
       if (axios.isAxiosError(error) && error.response) {
         const { status, data } = error.response;
-        if (status === 500 && data === 'Username or email already exists') {
+        if (status === 500 && data === 'Invalid referrer code') {
+          setErrorMessage('Invalid referral code');
+        } else if (
+          status === 500 &&
+          data === 'Username or email already exists'
+        ) {
           setErrorMessage('Username or email is already registered');
         } else {
           setErrorMessage(
@@ -103,6 +110,14 @@ function Register() {
 
   const handleClose = () => {
     setOpen(false);
+  };
+
+  const handleReferralChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    setFieldValue: any,
+  ) => {
+    const value = e.target.value.toUpperCase().slice(0, 5);
+    setFieldValue('referral', value);
   };
 
   return (
@@ -245,7 +260,9 @@ function Register() {
                     label="Referral"
                     type="referral"
                     name="referral"
-                    onChange={handleChange}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                      handleReferralChange(e, setFieldValue)
+                    }
                     value={values.referral}
                     error={touched.referral && Boolean(errors.referral)}
                     helperText={touched.referral && errors.referral}

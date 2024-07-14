@@ -12,6 +12,7 @@ export class UserController {
         first_name,
         last_name,
         referral_code,
+        own_referral_code,
         point_balance,
         role_id,
       }: IUser = req.body;
@@ -23,6 +24,7 @@ export class UserController {
         first_name,
         last_name,
         referral_code,
+        own_referral_code,
         point_balance,
         role_id,
       });
