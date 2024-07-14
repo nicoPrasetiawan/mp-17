@@ -18,6 +18,7 @@ import {
   DialogActions,
 } from '@mui/material';
 import { useRouter } from 'next/navigation';
+import axios from 'axios';
 
 const loginSchema = Yup.object({
   username: Yup.string().required('Username is required'),
@@ -31,17 +32,37 @@ const initialValues: ILogin = {
   password: '',
 };
 
+// NETWORK CALL
+const userLogin = async (username: string, password: string) => {
+  const user = await axios.post('http://localhost:8000/api/login', {
+    username,
+    password,
+  });
+
+  return user;
+};
+
 function Login() {
   const router = useRouter();
   const [open, setOpen] = useState(false);
 
-  const handleSubmit = (values: any, { setSubmitting, setErrors }: any) => {
-    if (values.username === 'admin' && values.password === 'admin') {
-      router.push('/');
-    } else {
+  const handleSubmit = async (
+    values: any,
+    { setSubmitting, setErrors }: any,
+  ) => {
+    try {
+      const user = await userLogin(values.username, values.password);
+      if (user) {
+        router.push('/');
+      } else {
+        setOpen(true);
+        setErrors({ password: 'Invalid username or password' });
+      }
+    } catch (error) {
       setOpen(true);
-      setSubmitting(false);
       setErrors({ password: 'Invalid username or password' });
+    } finally {
+      setSubmitting(false);
     }
   };
 
