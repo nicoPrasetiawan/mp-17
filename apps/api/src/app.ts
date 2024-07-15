@@ -9,6 +9,7 @@ import express, {
 import cors from 'cors';
 import { PORT } from './config';
 import { UserRouter } from './routers/user.router';
+import { EventRouter } from './routers/event.router';
 
 export default class App {
   private app: Express;
@@ -37,7 +38,7 @@ export default class App {
   }
 
   private routes(): void {
-    const routers = [new UserRouter()];
+    const routers = [new UserRouter(), new EventRouter()];
 
     routers.forEach((router) => {
       this.app.use('/api', router.getRouter());

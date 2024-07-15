@@ -21,6 +21,8 @@ model User {
   created_at        DateTime @default(now())
   updated_at        DateTime @updatedAt
   role              Role     @relation(fields: [role_id], references: [id])
+  event             Event[]   @relation("EventOrganizer")
+  // ticket            Ticket[]
 }
 
 model Role {
@@ -28,3 +30,63 @@ model Role {
   role_name String
   User      User[]
 }
+
+model Event {
+  event_id         Int         @id @default(autoincrement())
+  organizer_id     Int
+  event_name       String
+  event_description String
+  original_price   Float
+  start_date       DateTime
+  end_date         DateTime
+  location_id      Int
+  created_at       DateTime    @default(now())
+  updated_at       DateTime    @updatedAt
+  organizer        User        @relation("EventOrganizer", fields: [organizer_id], references: [user_id])
+  location         Location    @relation(fields: [location_id], references: [location_id])
+  categories       Event_Category[]
+  // tickets          Ticket[]
+}
+
+model Location {
+  location_id Int     @id @default(autoincrement())
+  city_name   String
+  events      Event[]
+}
+
+model Category {
+  category_id Int             @id @default(autoincrement())
+  name        String
+  events      Event_Category[]
+}
+
+model Event_Category {
+  event_id    Int
+  category_id Int
+  event       Event    @relation(fields: [event_id], references: [event_id])
+  category    Category @relation(fields: [category_id], references: [category_id])
+
+  @@id([event_id, category_id])
+}
+
+model Ticket_Type {
+  type_id    Int     @id @default(autoincrement())
+  type_name  String  // Can be "Free" or "Paid"
+  price      Float
+  // tickets    Ticket[]
+}
+
+// model Ticket {
+//   ticket_id       Int     @id @default(autoincrement())
+//   event_id        Int
+//   user_id         Int
+//   type_id         Int
+//   final_price     Float
+//   discount_applied Float
+//   earlybird_applied Float
+//   points_redeemed Int
+//   ticket_status   String  // Can be "booked" or "canceled"
+//   event           Event   @relation(fields: [event_id], references: [event_id])
+//   user            User    @relation(fields: [user_id], references: [user_id])
+//   ticket_type     TicketType @relation(fields: [type_id], references: [type_id])
+// }
