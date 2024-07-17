@@ -40,6 +40,8 @@ model Event {
   start_date       DateTime
   end_date         DateTime
   location_id      Int
+  total_seats      Int
+  available_seats  Int
   created_at       DateTime    @default(now())
   updated_at       DateTime    @updatedAt
   organizer        User        @relation("EventOrganizer", fields: [organizer_id], references: [user_id])

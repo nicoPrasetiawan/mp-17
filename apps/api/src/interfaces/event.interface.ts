@@ -6,6 +6,7 @@ export interface IEvent {
     start_date: Date;
     end_date: Date;
     location_id: number;
+    total_seats: number;
   }
 
   export interface IEventCategory {
