@@ -1,9 +1,9 @@
-import { Typography } from '@mui/material';
+import HomeView from '@/view/home';
 
 export default function Home() {
   return (
     <main>
-      <Typography variant="h2">HOMEPAGE</Typography>
+      <HomeView />
     </main>
   );
 }

@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { Formik, Form, Field, FormikProps } from 'formik';
 import * as Yup from 'yup';
 
-import { IRegister } from '../interfaces/register.interface';
+import { IRegister } from '../../interfaces/register.interface';
 import {
   Box,
   Container,
@@ -24,6 +24,8 @@ import {
 } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
+import { useAppDispatch } from '@/lib/hooks';
+import { register } from '@/lib/features/auth/authSlices';
 
 const registrationSchema = Yup.object({
   username: Yup.string().required('Username is required'),
@@ -51,38 +53,38 @@ const initialValues: IRegister = {
   referral: '',
 };
 
-// NETWORK CALL
-const userRegister = async ({
-  username,
-  email,
-  firstName,
-  lastName,
-  accountType,
-  password,
-  referral = '',
-}: IRegister) => {
-  const user = await axios.post('http://localhost:8000/api/register', {
-    username,
-    email,
-    first_name: firstName,
-    last_name: lastName,
-    role_id: Number(accountType),
-    password,
-    referral_code: referral,
-  });
-  return user;
-};
-
 function Register() {
   const router = useRouter();
+  const dispatch = useAppDispatch();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [open, setOpen] = useState(false);
 
   const handleSubmit = async (values: IRegister) => {
+    const {
+      username,
+      email,
+      firstName,
+      lastName,
+      accountType,
+      password,
+      referral,
+    } = values;
+
     try {
       setErrorMessage(null);
       setOpen(false);
-      await userRegister(values);
+
+      await dispatch(
+        register({
+          username,
+          email,
+          firstName,
+          lastName,
+          accountType: Number(accountType),
+          password,
+          referral,
+        }),
+      );
       router.push('/success-register');
     } catch (error: any) {
       if (axios.isAxiosError(error) && error.response) {
