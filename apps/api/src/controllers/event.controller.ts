@@ -13,6 +13,7 @@ export class EventController {
         start_date, 
         end_date,
         location_id,
+        total_seats,
         category_id // Extract category_id from request body
       }: IEvent & IEventCategory = req.body;
 
@@ -23,7 +24,8 @@ export class EventController {
         original_price, 
         start_date, 
         end_date,
-        location_id 
+        location_id,
+        total_seats
       }, 
       {
         category_id // Pass category_id to the createEvent function

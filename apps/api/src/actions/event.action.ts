@@ -11,7 +11,8 @@ class EventAction {
     original_price: number, 
     start_date: Date, 
     end_date: Date,
-    location_id: number) => {
+    location_id: number,
+    total_seats: number) => {
     try {
       const event = await prisma.event.findFirst({
         where: {
@@ -22,6 +23,7 @@ class EventAction {
             {start_date},
             {end_date},
             {location_id},
+            {total_seats}
           ],
         },
       });
@@ -55,7 +57,8 @@ class EventAction {
       original_price, 
       start_date, 
       end_date,
-      location_id 
+      location_id,
+      total_seats
     }: IEvent,
     {
       category_id
@@ -78,7 +81,8 @@ class EventAction {
         original_price, 
         start_date, 
         end_date,
-        location_id );
+        location_id,
+        total_seats );
       if (isDuplicate) throw new Error('The same exact event already exists');
 
       const event = await prisma.event.create({
@@ -89,13 +93,15 @@ class EventAction {
           original_price, 
           start_date, 
           end_date,
-          location_id 
+          location_id,
+          total_seats,
+          available_seats: total_seats
         },
       });
 
       const event_category = await prisma.event_Category.create({
         data: {
-          event_id: event.event_id, //question for chatgpt here
+          event_id: event.event_id,
           category_id
         },
       });
