@@ -14,7 +14,6 @@ model User {
   password          String
   first_name        String
   last_name         String
-  referral_code     String?
   own_referral_code String?  @unique
   point_balance     Int      @default(0)
   role_id           Int
@@ -22,13 +21,61 @@ model User {
   updated_at        DateTime @updatedAt
   role              Role     @relation(fields: [role_id], references: [id])
   event             Event[]   @relation("EventOrganizer")
+  referralsGiven    Referral[] @relation("Referrer")
+  referralsReceived Referral[] @relation("Referred")
   // ticket            Ticket[]
+
+  @@index([username])
+  @@index([email])
+  @@index([own_referral_code])
 }
+
+model Referral {
+  id             Int      @id @default(autoincrement())
+  referral_code  String
+  referrer_id    Int
+  referred_id    Int
+  points_awarded Int
+  created_at     DateTime @default(now())
+  valid_until    DateTime
+  referrer       User     @relation("Referrer", fields: [referrer_id], references: [user_id])
+  referred       User     @relation("Referred", fields: [referred_id], references: [user_id])
+
+  @@unique([referrer_id, referred_id])
+  @@index([referral_code])
+  @@index([referrer_id])
+  @@index([referred_id])
+}
+
 
 model Role {
   id        Int    @id @default(autoincrement())
   role_name String
   User      User[]
+}
+
+model Promotion {
+  promotion_id          Int              @id @default(autoincrement())
+  event_id              Int
+  discount_value        Float
+  discount_category_id  Int              
+  start_date            DateTime
+  end_date              DateTime
+  created_at            DateTime         @default(now())
+  discountCategory      DiscountCategory @relation(fields: [discount_category_id], references: [id])
+  event                 Event            @relation(fields: [event_id], references: [event_id])
+
+  @@index([event_id])
+  @@index([discount_category_id])
+}
+
+model DiscountCategory {
+  id            Int       @id @default(autoincrement())
+  name          String
+  description   String?
+  promotions    Promotion[]
+
+  @@unique([name])
 }
 
 model Event {
@@ -48,6 +95,7 @@ model Event {
   location         Location    @relation(fields: [location_id], references: [location_id])
   categories       Event_Category[]
   // tickets          Ticket[]
+  promotions       Promotion[]
 }
 
 model Location {

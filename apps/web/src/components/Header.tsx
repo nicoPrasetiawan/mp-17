@@ -43,7 +43,7 @@ function Header() {
                 variant="contained"
                 onClick={() => {
                   dispatch(logout());
-                  router.push('/login');
+                  router.push('/');
                 }}
               >
                 Logout
