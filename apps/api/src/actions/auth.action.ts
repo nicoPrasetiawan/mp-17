@@ -16,7 +16,7 @@ function generateReferralCode(length: number) {
   return result;
 }
 
-// Function to hashing password
+// Function to hash password
 async function hashingPassword(password: string) {
   const salt = await genSalt(10);
   const hashedPass = await hash(password, salt);
@@ -35,6 +35,8 @@ export class AuthAction {
     point_balance,
     role_id,
   }: IUser) => {
+    const prismaClient = prisma;
+
     try {
       const isDuplicate = await userAction.findUserByEmailOrUsername(
         username,
@@ -43,35 +45,61 @@ export class AuthAction {
       if (isDuplicate)
         throw new HttpException(500, 'Username or email already exists');
 
-      // Check if the provided referral_code exists
-      if (referral_code) {
-        const referrer = await prisma.user.findUnique({
-          where: { own_referral_code: referral_code },
-        });
-
-        if (!referrer) {
-          throw new HttpException(500, 'Invalid referrer code');
-        }
-      }
-
       // Generate a new unique referral code for the user
       const ownReferralCode = generateReferralCode(5);
 
       // Hash password
       const hashedPass = await hashingPassword(password);
 
-      const user = await prisma.user.create({
-        data: {
-          username,
-          email,
-          password: hashedPass,
-          first_name,
-          last_name,
-          referral_code: referral_code || null, // Handle optional fields
-          own_referral_code: ownReferralCode,
-          point_balance,
-          role_id,
-        },
+      // Start a transaction
+      const user = await prismaClient.$transaction(async (transaction) => {
+        // Create the new user
+        const newUser = await transaction.user.create({
+          data: {
+            username,
+            email,
+            password: hashedPass,
+            first_name,
+            last_name,
+            own_referral_code: ownReferralCode,
+            point_balance,
+            role_id,
+          },
+        });
+
+        // If a referral code was used, create a referral entry and update referrer's point balance
+        if (referral_code) {
+          const referrer = await transaction.user.findUnique({
+            where: { own_referral_code: referral_code },
+          });
+
+          if (!referrer) {
+            throw new HttpException(500, 'Invalid referrer code');
+          }
+
+          const referrerId = referrer.user_id;
+          const newPointBalance = referrer.point_balance + 10000;
+
+          await transaction.user.update({
+            where: { user_id: referrerId },
+            data: { point_balance: newPointBalance },
+          });
+
+          const validUntil = new Date();
+          validUntil.setMonth(validUntil.getMonth() + 3);
+
+          await transaction.referral.create({
+            data: {
+              referral_code,
+              referrer_id: referrerId,
+              referred_id: newUser.user_id,
+              points_awarded: 10000,
+              valid_until: validUntil,
+            },
+          });
+        }
+
+        return newUser;
       });
 
       return user;
@@ -86,7 +114,7 @@ export class AuthAction {
 
       if (!user) throw new HttpException(500, 'Incorrect email or password');
 
-      // hashed assword comparison
+      // hashed password comparison
       const isPassValid = await compare(password, user.password);
       if (!isPassValid)
         throw new HttpException(500, 'Incorrect email or password');
