@@ -5,6 +5,7 @@ import instance from '@/utils/axiosInstance';
 type User = {
   username: string;
   email: string;
+  roleName: string;
 };
 
 type LoginStatus = {
@@ -20,6 +21,7 @@ const initialState: Auth = {
   user: {
     username: '',
     email: '',
+    roleName: '',
   },
   loginStatus: {
     isLogin: false,
@@ -104,6 +106,7 @@ export const login =
         loginState({
           username: payload?.username,
           email: payload?.email,
+          roleName: payload?.role_name,
         }),
       );
       localStorage.setItem('token', String(data?.data));
@@ -133,6 +136,7 @@ export const checkToken = (token: string) => async (dispatch: Dispatch) => {
       tokenValidState({
         username: payload?.username,
         email: payload?.email,
+        roleName: payload.role_name,
       }),
     );
     localStorage.setItem('token', String(data?.data));
