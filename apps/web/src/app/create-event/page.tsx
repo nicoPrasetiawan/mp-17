@@ -26,12 +26,21 @@ import { useRouter } from 'next/navigation';
 import axios from 'axios';
 
 const eventSchema = Yup.object({
-  eventName: Yup.string().required('Event name is required'),
-  eventDescription: Yup.string().required('Event description is required'),
+  eventName: Yup.string().required('Event name is required').max(191, 'Have a concise event name (max: 191 character)'),
+  eventDescription: Yup.string().required('Event description is required').max(2000, 'Have a concise event description (max: 2000 character)'),
   startDate: Yup.date().required('Start time is required'),
-  endDate: Yup.date().required('End time is required'),
+  endDate: Yup.date().required('End time is required').min(
+    Yup.ref('startDate'),
+    'End date must be later than start date'
+  ),
   ticketType: Yup.string().required('Ticket type is required'),
-  originalPrice: Yup.number().required('Price is required').min(0, 'Price must be a positive number'),
+  originalPrice: Yup.number()
+    .required('Price is required')
+    .when('ticketType', (ticketType, schema) => {
+      return ticketType === 'free'
+        ? schema.oneOf([0], 'Price must be 0 for free tickets')  // Ensure this matches against an array [0]
+        : schema.min(0, 'Price must be a positive number');
+    }),
   location: Yup.string().required('Location is required'),
   category: Yup.string().required('Category is required'),
   totalSeats: Yup.number().required('Number of seats is required').min(1, 'Number of seats must be at least 1'),
@@ -91,7 +100,7 @@ function CreateEvent() {
       setOpen(false);
       console.log(values)
       await createEvent(values);
-      // router.push('/success-create-event');
+      router.push('/success-create-event');
     } catch (error: any) {
       console.error("Complete error object:", error);
       if (axios.isAxiosError(error)) {
