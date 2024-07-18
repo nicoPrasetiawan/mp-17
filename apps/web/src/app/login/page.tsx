@@ -45,7 +45,7 @@ function Login() {
 
     try {
       await dispatch(login({ password, username }));
-      router.push('/');
+      router.push('/redirect');
     } catch (error) {
       console.error(error);
       setOpen(true); // Open the dialog on error
