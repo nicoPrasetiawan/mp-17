@@ -263,6 +263,7 @@ function CreateEvent() {
                     name="originalPrice"
                     onChange={handleChange}
                     value={values.originalPrice}
+                    disabled={values.ticketType === 'free'}
                     error={touched.originalPrice && Boolean(errors.originalPrice)}
                     helperText={touched.originalPrice && errors.originalPrice}
                   />
