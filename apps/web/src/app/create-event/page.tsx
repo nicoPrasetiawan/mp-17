@@ -26,10 +26,13 @@ import { useRouter } from 'next/navigation';
 import axios from 'axios';
 
 const eventSchema = Yup.object({
-  eventName: Yup.string().required('Event name is required'),
-  eventDescription: Yup.string().required('Event description is required'),
+  eventName: Yup.string().required('Event name is required').max(191, 'Have a concise event name (max: 191 character)'),
+  eventDescription: Yup.string().required('Event description is required').max(2000, 'Have a concise event description (max: 2000 character)'),
   startDate: Yup.date().required('Start time is required'),
-  endDate: Yup.date().required('End time is required'),
+  endDate: Yup.date().required('End time is required').min(
+    Yup.ref('startDate'),
+    'End-time must be later than start-time'
+  ),
   ticketType: Yup.string().required('Ticket type is required'),
   originalPrice: Yup.number().required('Price is required').min(0, 'Price must be a positive number'),
   location: Yup.string().required('Location is required'),
@@ -91,7 +94,7 @@ function CreateEvent() {
       setOpen(false);
       console.log(values)
       await createEvent(values);
-      // router.push('/success-create-event');
+      router.push('/success-create-event');
     } catch (error: any) {
       console.error("Complete error object:", error);
       if (axios.isAxiosError(error)) {
@@ -260,6 +263,7 @@ function CreateEvent() {
                     name="originalPrice"
                     onChange={handleChange}
                     value={values.originalPrice}
+                    disabled={values.ticketType === 'free'}
                     error={touched.originalPrice && Boolean(errors.originalPrice)}
                     helperText={touched.originalPrice && errors.originalPrice}
                   />

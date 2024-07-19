@@ -82,7 +82,7 @@ model Event {
   event_id         Int         @id @default(autoincrement())
   organizer_id     Int
   event_name       String
-  event_description String
+  event_description String     @db.VarChar(2000)
   original_price   Float
   start_date       DateTime
   end_date         DateTime

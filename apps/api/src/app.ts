@@ -11,6 +11,7 @@ import { PORT } from './config';
 import { UserRouter } from './routers/user.router';
 import { AuthRouter } from './routers/auth.router';
 import { ErrorMiddleware } from './middlewares/error.middleware';
+import { EventRouter } from './routers/event.router';
 
 export default class App {
   private app: Express;
@@ -34,7 +35,7 @@ export default class App {
   }
 
   private routes(): void {
-    const routers = [new UserRouter(), new AuthRouter()];
+    const routers = [new UserRouter(), new AuthRouter(), new EventRouter()];
 
     routers.forEach((router) => {
       this.app.use('/api', router.getRouter());
