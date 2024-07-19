@@ -1,10 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { Formik, Form, Field, FormikProps } from 'formik';
+import { Formik, Form, Field, FormikProps, FormikHelpers } from 'formik';
 import * as Yup from 'yup';
-
-import { ILogin } from '../interfaces/login.interface';
+import { ILogin } from '../../interfaces/login.interface';
 import {
   Box,
   Container,
@@ -18,7 +17,8 @@ import {
   DialogActions,
 } from '@mui/material';
 import { useRouter } from 'next/navigation';
-import axios from 'axios';
+import { useAppDispatch } from '@/lib/hooks';
+import { login } from '@/lib/features/auth/authSlices';
 
 const loginSchema = Yup.object({
   username: Yup.string().required('Username is required'),
@@ -32,37 +32,24 @@ const initialValues: ILogin = {
   password: '',
 };
 
-// NETWORK CALL
-const userLogin = async (username: string, password: string) => {
-  const user = await axios.post('http://localhost:8000/api/login', {
-    username,
-    password,
-  });
-
-  return user;
-};
-
 function Login() {
   const router = useRouter();
   const [open, setOpen] = useState(false);
+  const dispatch = useAppDispatch();
 
   const handleSubmit = async (
-    values: any,
-    { setSubmitting, setErrors }: any,
+    values: ILogin,
+    actions: FormikHelpers<ILogin>,
   ) => {
+    const { username, password } = values;
+
     try {
-      const user = await userLogin(values.username, values.password);
-      if (user) {
-        router.push('/');
-      } else {
-        setOpen(true);
-        setErrors({ password: 'Invalid username or password' });
-      }
+      await dispatch(login({ password, username }));
+      router.push('/');
     } catch (error) {
-      setOpen(true);
-      setErrors({ password: 'Invalid username or password' });
-    } finally {
-      setSubmitting(false);
+      console.error(error);
+      setOpen(true); // Open the dialog on error
+      actions.setSubmitting(false);
     }
   };
 

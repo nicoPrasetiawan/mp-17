@@ -31,16 +31,10 @@ const eventSchema = Yup.object({
   startDate: Yup.date().required('Start time is required'),
   endDate: Yup.date().required('End time is required').min(
     Yup.ref('startDate'),
-    'End date must be later than start date'
+    'End-time must be later than start-time'
   ),
   ticketType: Yup.string().required('Ticket type is required'),
-  originalPrice: Yup.number()
-    .required('Price is required')
-    .when('ticketType', (ticketType, schema) => {
-      return ticketType === 'free'
-        ? schema.oneOf([0], 'Price must be 0 for free tickets')  // Ensure this matches against an array [0]
-        : schema.min(0, 'Price must be a positive number');
-    }),
+  originalPrice: Yup.number().required('Price is required').min(0, 'Price must be a positive number'),
   location: Yup.string().required('Location is required'),
   category: Yup.string().required('Category is required'),
   totalSeats: Yup.number().required('Number of seats is required').min(1, 'Number of seats must be at least 1'),

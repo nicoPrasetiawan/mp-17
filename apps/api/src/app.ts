@@ -9,6 +9,8 @@ import express, {
 import cors from 'cors';
 import { PORT } from './config';
 import { UserRouter } from './routers/user.router';
+import { AuthRouter } from './routers/auth.router';
+import { ErrorMiddleware } from './middlewares/error.middleware';
 import { EventRouter } from './routers/event.router';
 
 export default class App {
@@ -29,16 +31,11 @@ export default class App {
   }
 
   private handleError(): void {
-    this.app.use(
-      (err: Error, req: Request, res: Response, next: NextFunction) => {
-        console.log(err.message);
-        res.status(500).send(err.message);
-      },
-    );
+    this.app.use(ErrorMiddleware);
   }
 
   private routes(): void {
-    const routers = [new UserRouter(), new EventRouter()];
+    const routers = [new UserRouter(), new AuthRouter(), new EventRouter()];
 
     routers.forEach((router) => {
       this.app.use('/api', router.getRouter());

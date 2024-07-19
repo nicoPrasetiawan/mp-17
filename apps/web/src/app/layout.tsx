@@ -2,6 +2,8 @@ import type { Metadata } from 'next';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import './globals.css';
+import StoreProvider from './StoreProvider';
+import Auth from './Auth';
 
 export const metadata: Metadata = {
   title: 'Eventica',
@@ -18,18 +20,22 @@ export default function RootLayout({
       <body
         style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}
       >
-        <Header />
-        <main
-          style={{
-            flex: 1,
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}
-        >
-          {children}
-        </main>
-        <Footer />
+        <StoreProvider>
+          <Auth>
+            <Header />
+            <main
+              style={{
+                flex: 1,
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}
+            >
+              {children}
+            </main>
+            <Footer />
+          </Auth>
+        </StoreProvider>
       </body>
     </html>
   );
