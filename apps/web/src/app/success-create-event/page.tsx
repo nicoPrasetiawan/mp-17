@@ -11,7 +11,7 @@ function SuccessCreateEvent() {
   const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
 
   const handleGoToHomepageEOPage = () => {
-    router.push('/homepage-eo');
+    router.push('/eo');
   };
 
   useEffect(() => {
