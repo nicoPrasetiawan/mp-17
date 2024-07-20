@@ -45,6 +45,7 @@ class UserAction {
           first_name: true,
           last_name: true,
           password: true,
+          role_id: true,
           role: {
             select: {
               role_name: true,

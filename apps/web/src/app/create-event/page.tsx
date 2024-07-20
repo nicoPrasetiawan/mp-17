@@ -41,7 +41,7 @@ const eventSchema = Yup.object({
 });
 
 const initialEventValues: IEvent = {
-  organizerId: 5, //need to be changed after JWT
+  organizerId: 13, //need to be changed after JWT
   eventName: '',
   eventDescription: '',
   startDate: new Date(),

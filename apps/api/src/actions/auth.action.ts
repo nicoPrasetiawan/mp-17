@@ -125,6 +125,7 @@ export class AuthAction {
         first_name: user.first_name,
         last_name: user.last_name,
         role_name: user.role.role_name,
+        role_id: user.role_id,
       };
 
       const token = sign(payload, String(process.env.API_KEY), {
@@ -145,6 +146,7 @@ export class AuthAction {
       const payload = {
         username: user.username,
         role_name: user.role.role_name,
+        role_id: user.role_id,
       };
 
       const token = sign(payload, String(process.env.API_KEY), {
