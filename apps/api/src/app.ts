@@ -1,11 +1,4 @@
-import express, {
-  json,
-  urlencoded,
-  Express,
-  Request,
-  Response,
-  NextFunction,
-} from 'express';
+import express, { json, urlencoded, Express } from 'express';
 import cors from 'cors';
 import { PORT } from './config';
 import { UserRouter } from './routers/user.router';
