@@ -24,6 +24,7 @@ import {
 } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
+import { useAppSelector } from '@/lib/hooks';
 
 const eventSchema = Yup.object({
   eventName: Yup.string().required('Event name is required').max(191, 'Have a concise event name (max: 191 character)'),
@@ -40,8 +41,10 @@ const eventSchema = Yup.object({
   totalSeats: Yup.number().required('Number of seats is required').min(1, 'Number of seats must be at least 1'),
 });
 
+const {user} = useAppSelector((state)=> state.auth)
 const initialEventValues: IEvent = {
-  organizerId: 5, //need to be changed after JWT
+  // organizerId: user.roleId,
+  organizerId: 5,
   eventName: '',
   eventDescription: '',
   startDate: new Date(),
@@ -143,7 +146,7 @@ function CreateEvent() {
         }}
       >
         <Typography component="h1" variant="h4" sx={{ mb: 2 }}>
-          Create your event!
+          Post your event!
         </Typography>
         <Formik
           initialValues={initialEventValues}
@@ -162,7 +165,7 @@ function CreateEvent() {
                     margin="normal"
                     fullWidth
                     id="eventName"
-                    label="What’s the name of your event?"
+                    label="What’s the title of your event?"
                     name="eventName"
                     onChange={handleChange}
                     value={values.eventName}
