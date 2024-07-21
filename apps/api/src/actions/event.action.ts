@@ -113,10 +113,44 @@ class EventAction {
     }
   };
 
-  getEvents = async () => {
-    const events = await prisma.event.findMany();
+  getEvents = async (textInput: string, location: number | null, category: number | null, page: number) => {
+    const whereClause: any = {
+      OR: [
+        {
+          event_name: { contains: textInput },
+        },
+        {
+          event_description: { contains: textInput },
+        },
+      ],
+    };
 
-    return events;
+    if (location) {
+      whereClause.location_id = location;
+    }
+
+    if (category) {
+      whereClause.categories = {
+        some: {
+          category_id: category,
+        },
+      };
+    }
+
+    const events = await prisma.event.findMany({
+      skip: (Number(page) - 1) * Number(6),
+      take: Number(6),
+      where: whereClause,
+      include: {
+        categories: true,
+      },
+    });
+
+    const total_count = await prisma.event.count({
+      where: whereClause,
+    });
+
+    return { events, total_count };
   };
 }
 
