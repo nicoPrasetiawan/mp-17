@@ -12,10 +12,10 @@ const HomeUserView: React.FC = () => {
   const router = useRouter();
 
   useEffect(() => {
-    if (!loginStatus.isLogin) {
+    if (!loginStatus.isLogin && user.roleName === 'user') {
       router.push('/');
     }
-  }, [loginStatus]);
+  }, [loginStatus, user]);
   
   return (
     <Container maxWidth="lg">
