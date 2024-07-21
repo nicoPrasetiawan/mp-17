@@ -84,7 +84,7 @@ function Dashboard() {
   const [error, setError] = useState<Error | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [open, setOpen] = useState(true);
-  const [selectedMenu, setSelectedMenu] = useState<string>('Events');
+  const [selectedMenu, setSelectedMenu] = useState<string>('Statistics');
   const { loginStatus, user } = useAppSelector((state) => state.auth);
   const organizer_id = user?.userId;
   const theme = useTheme();
@@ -133,7 +133,7 @@ function Dashboard() {
       case 'Transactions':
         return <Transactions />;
       case 'Statistics':
-        return <Statistics />;
+        return <Statistics organizer_id={organizer_id} />;
       default:
         return null;
     }
@@ -157,7 +157,7 @@ function Dashboard() {
           >
             <MenuIcon />
           </IconButton>
-          <Typography variant="h6" noWrap component="div">
+          <Typography variant="h5" noWrap component="div">
             DASHBOARD
           </Typography>
         </Toolbar>
