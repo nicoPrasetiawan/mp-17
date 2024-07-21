@@ -12,7 +12,7 @@ const HomeEOView: React.FC = () => {
   const router = useRouter();
 
   useEffect(() => {
-    if (!loginStatus.isLogin && user.roleName === 'event_organizer') {
+    if (!loginStatus.isLogin || user.roleName != 'event_organizer') {
       router.push('/');
     }
   }, [loginStatus, user]);

@@ -8,14 +8,7 @@ import { useAppSelector } from '@/lib/hooks';
 import { useRouter } from 'next/navigation';
 
 const HomeNonUserView: React.FC = () => {
-  const { loginStatus, user } = useAppSelector((state) => state.auth);
-  const router = useRouter();
-
-  useEffect(() => {
-    if (!loginStatus.isLogin) {
-      router.push('/');
-    }
-  }, [loginStatus]);
+  const {  user } = useAppSelector((state) => state.auth);
   
   return (
     <Container maxWidth="lg">

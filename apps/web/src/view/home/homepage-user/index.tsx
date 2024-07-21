@@ -12,7 +12,7 @@ const HomeUserView: React.FC = () => {
   const router = useRouter();
 
   useEffect(() => {
-    if (!loginStatus.isLogin && user.roleName === 'user') {
+    if (!loginStatus.isLogin || user.roleName != 'user') {
       router.push('/');
     }
   }, [loginStatus, user]);
