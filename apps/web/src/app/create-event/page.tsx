@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Formik, Form, Field, FormikProps } from 'formik';
 import * as Yup from 'yup';
 
@@ -41,10 +41,8 @@ const eventSchema = Yup.object({
   totalSeats: Yup.number().required('Number of seats is required').min(1, 'Number of seats must be at least 1'),
 });
 
-const {user} = useAppSelector((state)=> state.auth)
 const initialEventValues: IEvent = {
-  // organizerId: user.roleId,
-  organizerId: 5,
+  organizerId: 0,
   eventName: '',
   eventDescription: '',
   startDate: new Date(),
@@ -88,9 +86,22 @@ const createEvent = async ({
 };
 
 function CreateEvent() {
+  const {user} = useAppSelector((state)=> state.auth)
   const router = useRouter();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [open, setOpen] = useState(false);
+  const [initialValues, setInitialValues] = useState<IEvent>(initialEventValues);
+
+  // Saya tambah userEffect supaya komponen nya di render ulang, dan bisa ngambil value user.userId
+  useEffect(() => {
+    if (user) {
+      setInitialValues((prevValues) => ({
+        ...prevValues,
+        organizerId: user.userId, // saya re-assign value nya ke user.userId
+      }));
+    }
+  }, [user]);
+
   const handleSubmit = async (values: IEvent) => {
     try {
       setErrorMessage(null);
@@ -149,7 +160,8 @@ function CreateEvent() {
           Post your event!
         </Typography>
         <Formik
-          initialValues={initialEventValues}
+          initialValues={initialValues} // Disesuaikan ulang, jadinya pakai value yang di useState karna ada re-assign organizerId yg sebelumnya
+          enableReinitialize // supaya value yang initialEventValues bisa di reinitialize ke initialValues
           validationSchema={eventSchema}
           onSubmit={handleSubmit}
         >

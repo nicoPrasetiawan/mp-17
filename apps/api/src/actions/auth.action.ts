@@ -120,6 +120,7 @@ export class AuthAction {
         throw new HttpException(500, 'Incorrect email or password');
 
       const payload = {
+        userId: user.user_id,
         username: user.username,
         email: user.email,
         first_name: user.first_name,
@@ -146,6 +147,7 @@ export class AuthAction {
       if (!user) throw new HttpException(500, 'Something went wrong');
 
       const payload = {
+        userId: user.user_id,
         username: user.username,
         email: user.email,
         first_name: user.first_name,

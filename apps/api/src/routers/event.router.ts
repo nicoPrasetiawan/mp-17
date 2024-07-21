@@ -13,6 +13,12 @@ export class EventRouter {
     this.router.post('/events', this.eventController.createEvent);
     this.router.get('/events', this.eventController.getEvents);
     this.router.get('/events/:event_id', this.eventController.getEvent);
+
+    // saya tambahin route ini ya mba
+    this.router.get(
+      '/events-dashboard/:organizer_id',
+      this.eventController.getEventsByOrganizerId,
+    );
   }
 
   getRouter(): Router {

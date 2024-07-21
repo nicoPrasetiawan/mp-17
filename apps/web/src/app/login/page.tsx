@@ -15,10 +15,12 @@ import {
   DialogContent,
   DialogContentText,
   DialogActions,
+  Avatar,
 } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import { useAppDispatch } from '@/lib/hooks';
 import { login } from '@/lib/features/auth/authSlices';
+import ErrorIcon from '@mui/icons-material/Error';
 
 const loginSchema = Yup.object({
   username: Yup.string().required('Username is required'),
@@ -143,23 +145,68 @@ function Login() {
         onClose={handleClose}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
-        PaperProps={{
-          sx: {
-            padding: '2rem',
-            borderRadius: '0.5rem',
-            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-            animation: 'fadeIn 0.3s ease-out',
+        sx={{
+          '.MuiPaper-root': {
+            backgroundColor: '#ffebee',
+            color: '#d32f2f',
+            borderRadius: '10px',
+            maxWidth: '500px',
+            minWidth: '300px',
           },
         }}
       >
-        <DialogTitle id="alert-dialog-title">Invalid Login</DialogTitle>
+        <DialogTitle
+          id="alert-dialog-title"
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 1,
+            fontWeight: 'bold',
+            justifyContent: 'center',
+          }}
+        >
+          <ErrorIcon sx={{ color: '#d32f2f' }} />
+          {'Login Error'}
+        </DialogTitle>
         <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            Invalid username or password. Please try again.
-          </DialogContentText>
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: 2,
+            }}
+          >
+            <Avatar sx={{ bgcolor: '#d32f2f', width: 60, height: 60 }}>
+              <ErrorIcon sx={{ fontSize: 40 }} />
+            </Avatar>
+            <DialogContentText
+              id="alert-dialog-description"
+              sx={{
+                color: '#d32f2f',
+                textAlign: 'center',
+                fontSize: '1.2rem',
+                fontWeight: 'bold',
+              }}
+            >
+              Invalid username or password. Please try again.
+            </DialogContentText>
+          </Box>
         </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose} color="primary">
+        <DialogActions sx={{ justifyContent: 'center' }}>
+          <Button
+            onClick={handleClose}
+            color="primary"
+            variant="contained"
+            autoFocus
+            sx={{
+              mt: 2,
+              backgroundColor: 'primary.main',
+              '&:hover': {
+                backgroundColor: 'primary.dark',
+              },
+            }}
+          >
             Close
           </Button>
         </DialogActions>
