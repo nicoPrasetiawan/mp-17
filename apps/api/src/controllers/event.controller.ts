@@ -95,4 +95,18 @@ export class EventController {
       next(error);
     }
   };
+
+  getEventsStatisticsByOrganizerId = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const organizer_id = parseInt(req.params.organizer_id);
+      const statistics = await eventAction.findEventsStatisticsByOrganizerId(organizer_id);
+
+      res.status(200).json({
+        message: 'Get statistics success',
+        data: statistics,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
 }

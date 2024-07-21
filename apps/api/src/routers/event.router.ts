@@ -19,6 +19,10 @@ export class EventRouter {
       '/events-dashboard/:organizer_id',
       this.eventController.getEventsByOrganizerId,
     );
+    this.router.get(
+      '/events-statistics/:organizer_id',
+      this.eventController.getEventsStatisticsByOrganizerId
+    );
   }
 
   getRouter(): Router {
