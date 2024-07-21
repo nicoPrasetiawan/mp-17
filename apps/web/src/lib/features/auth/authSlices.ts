@@ -3,6 +3,7 @@ import parseJWT from '@/utils/parseJwt';
 import instance from '@/utils/axiosInstance';
 
 type User = {
+  userId: number;
   username: string;
   email: string;
   firstName: string;
@@ -24,6 +25,7 @@ interface Auth {
 
 const initialState: Auth = {
   user: {
+    userId: 0,
     username: '',
     email: '',
     firstName: '',
@@ -114,6 +116,7 @@ export const login =
 
       dispatch(
         loginState({
+          userId: payload?.userId,
           username: payload?.username,
           email: payload?.email,
           firstName: payload?.first_name,
@@ -149,6 +152,7 @@ export const checkToken = (token: string) => async (dispatch: Dispatch) => {
     const payload = await parseJWT(data?.data);
     dispatch(
       tokenValidState({
+        userId: payload?.userId,
         username: payload?.username,
         email: payload?.email,
         firstName: payload?.first_name,

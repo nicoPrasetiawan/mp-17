@@ -21,11 +21,14 @@ import {
   DialogContent,
   DialogContentText,
   DialogActions,
+  Avatar,
 } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import { useAppDispatch } from '@/lib/hooks';
 import { register } from '@/lib/features/auth/authSlices';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import ErrorIcon from '@mui/icons-material/Error';
 
 const registrationSchema = Yup.object({
   username: Yup.string().required('Username is required'),
@@ -57,7 +60,9 @@ function Register() {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [open, setOpen] = useState(false);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [openError, setOpenError] = useState(false);
+  const [openSuccess, setOpenSuccess] = useState(false);
 
   const handleSubmit = async (values: IRegister) => {
     const {
@@ -72,7 +77,9 @@ function Register() {
 
     try {
       setErrorMessage(null);
-      setOpen(false);
+      setOpenError(false);
+      setSuccessMessage(null);
+      setOpenSuccess(false);
 
       await dispatch(
         register({
@@ -85,17 +92,20 @@ function Register() {
           referral,
         }),
       );
-      router.push('/success-register');
+      setSuccessMessage(
+        'You have successfully registered! Please proceed to login.',
+      );
+      setOpenSuccess(true);
     } catch (error: any) {
       if (axios.isAxiosError(error) && error.response) {
         const { status, data } = error.response;
         if (status === 500 && data === 'Invalid referrer code') {
-          setErrorMessage('Invalid referral code');
+          setErrorMessage('Invalid referral code. Please check and try again.');
         } else if (
           status === 500 &&
           data === 'Username or email already exists'
         ) {
-          setErrorMessage('Username or email is already registered');
+          setErrorMessage('Username or email is already registered.');
         } else {
           setErrorMessage(
             'An unexpected error occurred. Please try again later.',
@@ -106,12 +116,17 @@ function Register() {
           'An unexpected error occurred. Please try again later.',
         );
       }
-      setOpen(true);
+      setOpenError(true);
     }
   };
 
-  const handleClose = () => {
-    setOpen(false);
+  const handleCloseError = () => {
+    setOpenError(false);
+  };
+
+  const handleCloseSuccess = () => {
+    setOpenSuccess(false);
+    router.push('/login');
   };
 
   const handleReferralChange = (
@@ -285,20 +300,144 @@ function Register() {
         </Formik>
       </Box>
       <Dialog
-        open={open}
-        onClose={handleClose}
+        open={openError}
+        onClose={handleCloseError}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
+        sx={{
+          '.MuiPaper-root': {
+            backgroundColor: '#ffebee',
+            color: '#d32f2f',
+            borderRadius: '10px',
+            maxWidth: '500px',
+            minWidth: '300px',
+          },
+        }}
       >
-        <DialogTitle id="alert-dialog-title">{'Oopss...'}</DialogTitle>
+        <DialogTitle
+          id="alert-dialog-title"
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 1,
+            fontWeight: 'bold',
+            justifyContent: 'center',
+          }}
+        >
+          <ErrorIcon sx={{ color: '#d32f2f' }} />
+          {'Registration Error'}
+        </DialogTitle>
         <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            {errorMessage}
-          </DialogContentText>
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: 2,
+            }}
+          >
+            <Avatar sx={{ bgcolor: '#d32f2f', width: 60, height: 60 }}>
+              <ErrorIcon sx={{ fontSize: 40 }} />
+            </Avatar>
+            <DialogContentText
+              id="alert-dialog-description"
+              sx={{
+                color: '#d32f2f',
+                textAlign: 'center',
+                fontSize: '1.2rem',
+                fontWeight: 'bold',
+              }}
+            >
+              {errorMessage}
+            </DialogContentText>
+          </Box>
         </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose} color="primary" autoFocus>
+        <DialogActions sx={{ justifyContent: 'center' }}>
+          <Button
+            onClick={handleCloseError}
+            color="primary"
+            variant="contained"
+            autoFocus
+            sx={{
+              mt: 2,
+              backgroundColor: 'primary.main',
+              '&:hover': {
+                backgroundColor: 'primary.dark',
+              },
+            }}
+          >
             OK
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <Dialog
+        open={openSuccess}
+        onClose={handleCloseSuccess}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+        sx={{
+          '.MuiPaper-root': {
+            backgroundColor: '#e8f5e9',
+            color: '#2e7d32',
+            borderRadius: '10px',
+            maxWidth: '500px',
+            minWidth: '300px',
+          },
+        }}
+      >
+        <DialogTitle
+          id="alert-dialog-title"
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 1,
+            fontWeight: 'bold',
+            justifyContent: 'center',
+          }}
+        >
+          <CheckCircleIcon sx={{ color: '#00c853' }} />
+          {'Success!'}
+        </DialogTitle>
+        <DialogContent>
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: 2,
+            }}
+          >
+            <Avatar sx={{ bgcolor: '#00c853', width: 60, height: 60 }}>
+              <CheckCircleIcon sx={{ fontSize: 40 }} />
+            </Avatar>
+            <DialogContentText
+              id="alert-dialog-description"
+              sx={{
+                color: '#2e7d32',
+                textAlign: 'center',
+                fontSize: '1.2rem',
+                fontWeight: 'bold',
+              }}
+            >
+              {successMessage}
+            </DialogContentText>
+          </Box>
+        </DialogContent>
+        <DialogActions sx={{ justifyContent: 'center' }}>
+          <Button
+            onClick={handleCloseSuccess}
+            color="primary"
+            variant="contained"
+            autoFocus
+            sx={{
+              mt: 2,
+              backgroundColor: 'primary.main',
+              '&:hover': {
+                backgroundColor: 'primary.dark',
+              },
+            }}
+          >
+            Go to Login
           </Button>
         </DialogActions>
       </Dialog>

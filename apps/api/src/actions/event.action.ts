@@ -152,6 +152,52 @@ class EventAction {
 
     return { events, total_count };
   };
+
+// saya tambahin ini ya mba
+findEventsByOrganizerId = async (query: any) => {
+  const { organizer_id } = query;
+
+  if (!organizer_id) {
+    throw new Error('Organizer ID is required');
+  }
+
+  try {
+    const events = await prisma.event.findMany({
+      select: {
+        event_id: true,
+        organizer_id: true,
+        event_name: true,
+        event_description: true,
+        original_price: true,
+        start_date: true,
+        end_date: true,
+        total_seats: true,
+        available_seats: true,
+        categories: {
+          select: {
+            category: {
+              select: {
+                name: true,
+              },
+            },
+          },
+        },
+        location: {
+          select: {
+            city_name: true,
+          },
+        },
+      },
+      where: {
+        organizer_id,
+      },
+    });
+
+    return events;
+  } catch (error) {
+    throw error;
+  }
+};
 }
 
 export default new EventAction();

@@ -80,4 +80,19 @@ export class EventController {
       next(error);
     }
   };
+
+  // saya tambahin ini ya mba
+  getEventsByOrganizerId = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const organizer_id = parseInt(req.params.organizer_id)
+      const events = await eventAction.findEventsByOrganizerId({organizer_id});
+
+      res.status(200).json({
+        message: 'Get events success',
+        data: events,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
 }
