@@ -20,7 +20,6 @@ const UserProfile = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [editedFirstName, setEditedFirstName] = useState(user.firstName);
   const [editedLastName, setEditedLastName] = useState(user.lastName);
-  const [editedUsername, setEditedUsername] = useState(user.username);
   const [editedEmail, setEditedEmail] = useState(user.email);
 
   const handleEditToggle = () => {
@@ -48,9 +47,10 @@ const UserProfile = () => {
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
+        alignItems: 'center',
       }}
     >
-      <Paper elevation={3} sx={{ p: 4, borderRadius: 2 }}>
+      <Paper elevation={3} sx={{ p: 4, borderRadius: 2, width: '100%' }}>
         <Box
           sx={{
             display: 'flex',
@@ -63,12 +63,12 @@ const UserProfile = () => {
             {user.username.charAt(0).toUpperCase()}
           </Avatar>
           <Typography variant="h4" align="center" sx={{ fontWeight: 'bold' }}>
-            User Profile
+            {user.username}
           </Typography>
         </Box>
-        <Grid container spacing={3}>
+        <Grid container spacing={3} justifyContent="center">
           <Grid item xs={12} sm={6}>
-            <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+            <Typography variant="h6" align="center" sx={{ fontWeight: 'bold' }}>
               First Name
             </Typography>
             {isEditing ? (
@@ -80,13 +80,13 @@ const UserProfile = () => {
                 sx={{ mt: 1 }}
               />
             ) : (
-              <Typography variant="body1" sx={{ mt: 1 }}>
+              <Typography variant="body1" align="center" sx={{ mt: 1 }}>
                 {user.firstName}
               </Typography>
             )}
           </Grid>
           <Grid item xs={12} sm={6}>
-            <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+            <Typography variant="h6" align="center" sx={{ fontWeight: 'bold' }}>
               Last Name
             </Typography>
             {isEditing ? (
@@ -98,31 +98,13 @@ const UserProfile = () => {
                 sx={{ mt: 1 }}
               />
             ) : (
-              <Typography variant="body1" sx={{ mt: 1 }}>
+              <Typography variant="body1" align="center" sx={{ mt: 1 }}>
                 {user.lastName}
               </Typography>
             )}
           </Grid>
           <Grid item xs={12} sm={6}>
-            <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-              Username
-            </Typography>
-            {isEditing ? (
-              <TextField
-                fullWidth
-                variant="outlined"
-                value={editedUsername}
-                onChange={(e) => setEditedUsername(e.target.value)}
-                sx={{ mt: 1 }}
-              />
-            ) : (
-              <Typography variant="body1" sx={{ mt: 1 }}>
-                {user.username}
-              </Typography>
-            )}
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+            <Typography variant="h6" align="center" sx={{ fontWeight: 'bold' }}>
               Email
             </Typography>
             {isEditing ? (
@@ -134,32 +116,32 @@ const UserProfile = () => {
                 sx={{ mt: 1 }}
               />
             ) : (
-              <Typography variant="body1" sx={{ mt: 1 }}>
+              <Typography variant="body1" align="center" sx={{ mt: 1 }}>
                 {user.email}
               </Typography>
             )}
           </Grid>
           <Grid item xs={12} sm={6}>
-            <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+            <Typography variant="h6" align="center" sx={{ fontWeight: 'bold' }}>
               Role
             </Typography>
-            <Typography variant="body1" sx={{ mt: 1 }}>
+            <Typography variant="body1" align="center" sx={{ mt: 1 }}>
               {user.roleName === 'user' ? 'User' : 'Event Organizer'}
             </Typography>
           </Grid>
           <Grid item xs={12} sm={6}>
-            <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+            <Typography variant="h6" align="center" sx={{ fontWeight: 'bold' }}>
               Referral Code
             </Typography>
-            <Typography variant="body1" sx={{ mt: 1 }}>
+            <Typography variant="body1" align="center" sx={{ mt: 1 }}>
               {user.referralCode || 'N/A'}
             </Typography>
           </Grid>
           <Grid item xs={12} sm={6}>
-            <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+            <Typography variant="h6" align="center" sx={{ fontWeight: 'bold' }}>
               Point Balance
             </Typography>
-            <Typography variant="body1" sx={{ mt: 1 }}>
+            <Typography variant="body1" align="center" sx={{ mt: 1 }}>
               {formatCurrency(user.pointBalance)}
             </Typography>
           </Grid>
