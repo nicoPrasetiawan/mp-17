@@ -8,6 +8,7 @@ import {
   IconButton,
   Box,
   Typography,
+  ListItemButton,
 } from '@mui/material';
 import {
   Event,
@@ -112,32 +113,39 @@ const drawerContent = (
     </DrawerHeader>
     <Divider />
     <List sx={{ mt: 2.5 }}>
-      <ListItem button onClick={() => setSelectedMenu('Events')}>
-        <ListItemIcon>
-          <Event />
-        </ListItemIcon>
-        <ListItemText primary="Events" />
+      <ListItem disablePadding>
+        <ListItemButton onClick={() => setSelectedMenu('Statistics')}>
+          <ListItemIcon>
+            <BarChart />
+          </ListItemIcon>
+          <ListItemText primary="Statistics" />
+        </ListItemButton>
       </ListItem>
-      <ListItem
-        button
-        onClick={() => setSelectedMenu('Attendee Registrations')}
-      >
-        <ListItemIcon>
-          <People />
-        </ListItemIcon>
-        <ListItemText primary="Attendee Registrations" />
+      <ListItem disablePadding>
+        <ListItemButton onClick={() => setSelectedMenu('Events')}>
+          <ListItemIcon>
+            <Event />
+          </ListItemIcon>
+          <ListItemText primary="Events" />
+        </ListItemButton>
       </ListItem>
-      <ListItem button onClick={() => setSelectedMenu('Transactions')}>
-        <ListItemIcon>
-          <AttachMoney />
-        </ListItemIcon>
-        <ListItemText primary="Transactions" />
+      <ListItem disablePadding>
+        <ListItemButton
+          onClick={() => setSelectedMenu('Attendee Registrations')}
+        >
+          <ListItemIcon>
+            <People />
+          </ListItemIcon>
+          <ListItemText primary="Attendee Registrations" />
+        </ListItemButton>
       </ListItem>
-      <ListItem button onClick={() => setSelectedMenu('Statistics')}>
-        <ListItemIcon>
-          <BarChart />
-        </ListItemIcon>
-        <ListItemText primary="Statistics" />
+      <ListItem disablePadding>
+        <ListItemButton onClick={() => setSelectedMenu('Transactions')}>
+          <ListItemIcon>
+            <AttachMoney />
+          </ListItemIcon>
+          <ListItemText primary="Transactions" />
+        </ListItemButton>
       </ListItem>
     </List>
   </div>

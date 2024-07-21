@@ -198,6 +198,93 @@ findEventsByOrganizerId = async (query: any) => {
     throw error;
   }
 };
+
+findEventsStatisticsByOrganizerId = async (organizer_id: number) => {
+  const eventCount = await prisma.event.count({
+    where: {
+      organizer_id,
+    },
+  });
+
+  const totalSeats = await prisma.event.aggregate({
+    _sum: {
+      total_seats: true,
+    },
+    where: {
+      organizer_id,
+    },
+  });
+
+  const availableSeats = await prisma.event.aggregate({
+    _sum: {
+      available_seats: true,
+    },
+    where: {
+      organizer_id,
+    },
+  });
+
+  const completedEvents = await prisma.event.count({
+    where: {
+      organizer_id,
+      end_date: {
+        lt: new Date(), // Less than current date
+      },
+    },
+  });
+
+  const eventsByLocation = await prisma.event.groupBy({
+    by: ['location_id'],
+    _count: {
+      event_id: true,
+    },
+    where: {
+      organizer_id,
+    },
+  });
+
+  // Fetch city_names dari table location
+  const locationIds = eventsByLocation.map(loc => loc.location_id);
+  const locations = await prisma.location.findMany({
+    where: {
+      location_id: {
+        in: locationIds
+      }
+    },
+    select: {
+      location_id: true,
+      city_name: true,
+    }
+  });
+
+  const eventsByPrice = await prisma.event.groupBy({
+    by: ['original_price'],
+    _count: {
+      event_id: true,
+    },
+    where: {
+      organizer_id,
+    },
+  });
+
+  // Map location_id ke city_name
+  const eventsByLocationWithCity = eventsByLocation.map(eventLoc => {
+    const location = locations.find(loc => loc.location_id === eventLoc.location_id);
+    return {
+      city_name: location?.city_name || `Location ${eventLoc.location_id}`,
+      event_count: eventLoc._count.event_id,
+    };
+  });
+
+  return {
+    eventCount,
+    totalSeats: totalSeats._sum.total_seats || 0,
+    availableSeats: availableSeats._sum.available_seats || 0,
+    completedEvents,
+    eventsByLocation: eventsByLocationWithCity,
+    eventsByPrice,
+  };
+};
 }
 
 export default new EventAction();
