@@ -1,9 +1,13 @@
-import HomeView from '@/view/home';
+import HomeNonUserView from '@/view/home/homepage-non';
 
-export default function Home() {
+
+function NonUserPage() {
   return (
     <main>
-      <HomeView />
+      
+      <HomeNonUserView/>
     </main>
   );
 }
+
+export default NonUserPage;

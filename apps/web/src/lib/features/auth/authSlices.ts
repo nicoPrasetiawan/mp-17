@@ -5,6 +5,11 @@ import instance from '@/utils/axiosInstance';
 type User = {
   username: string;
   email: string;
+  firstName: string;
+  lastName: string;
+  referralCode: string;
+  pointBalance: number;
+  roleId: number;
   roleName: string;
 };
 
@@ -21,6 +26,11 @@ const initialState: Auth = {
   user: {
     username: '',
     email: '',
+    firstName: '',
+    lastName: '',
+    referralCode: '',
+    pointBalance: 0,
+    roleId: 0,
     roleName: '',
   },
   loginStatus: {
@@ -106,6 +116,11 @@ export const login =
         loginState({
           username: payload?.username,
           email: payload?.email,
+          firstName: payload?.first_name,
+          lastName: payload?.last_name,
+          referralCode: payload?.referral_code,
+          pointBalance: payload?.point_balance,
+          roleId: payload?.role_id,
           roleName: payload?.role_name,
         }),
       );
@@ -136,6 +151,11 @@ export const checkToken = (token: string) => async (dispatch: Dispatch) => {
       tokenValidState({
         username: payload?.username,
         email: payload?.email,
+        firstName: payload?.first_name,
+        lastName: payload?.last_name,
+        referralCode: payload?.referral_code,
+        pointBalance: payload?.point_balance,
+        roleId: payload?.role_id,
         roleName: payload.role_name,
       }),
     );

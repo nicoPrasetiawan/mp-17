@@ -40,18 +40,32 @@ export class EventController {
     }
   };
 
-  getEvents= async (req: Request, res: Response, next: NextFunction) => {
+  getEvents = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const events = await eventAction.getEvents();
+      const {
+        textInput = '',
+        location,
+        category,
+        page = 1,
+      } = req.query;
+
+      const { events, total_count } = await eventAction.getEvents(
+        String(textInput),
+        location ? Number(location) : null,
+        category ? Number(category) : null,
+        Number(page)
+      );
 
       res.status(200).json({
-        message: 'Get users success',
+        message: 'Get events success',
         data: events,
+        total_count: total_count,
       });
     } catch (error) {
       next(error);
     }
   };
+
 
   getEvent = async (req: Request, res: Response, next: NextFunction) => {
     try {

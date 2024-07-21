@@ -125,6 +125,9 @@ export class AuthAction {
         first_name: user.first_name,
         last_name: user.last_name,
         role_name: user.role.role_name,
+        role_id: user.role_id,
+        referral_code: user.own_referral_code,
+        point_balance: user.point_balance,
       };
 
       const token = sign(payload, String(process.env.API_KEY), {
@@ -144,7 +147,13 @@ export class AuthAction {
 
       const payload = {
         username: user.username,
+        email: user.email,
+        first_name: user.first_name,
+        last_name: user.last_name,
+        referral_code: user.own_referral_code,
+        point_balance: user.point_balance,
         role_name: user.role.role_name,
+        role_id: user.role_id,
       };
 
       const token = sign(payload, String(process.env.API_KEY), {

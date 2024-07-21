@@ -45,6 +45,9 @@ class UserAction {
           first_name: true,
           last_name: true,
           password: true,
+          role_id: true,
+          point_balance: true,
+          own_referral_code: true,
           role: {
             select: {
               role_name: true,

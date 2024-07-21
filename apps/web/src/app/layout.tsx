@@ -18,7 +18,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          minHeight: '100vh',
+          background: 'linear-gradient(to bottom, #ffffff, #f1f1f1, #f1f1f1)',
+          backgroundAttachment: 'fixed',
+        }}
       >
         <StoreProvider>
           <Auth>
@@ -27,6 +33,7 @@ export default function RootLayout({
               style={{
                 flex: 1,
                 display: 'flex',
+                flexDirection: 'column',
                 justifyContent: 'center',
                 alignItems: 'center',
               }}

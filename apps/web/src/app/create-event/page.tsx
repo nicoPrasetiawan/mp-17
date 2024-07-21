@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { Formik, Form, Field, FormikProps } from 'formik';
 import * as Yup from 'yup';
 
-import { IEvent } from '../interfaces/event.interface';
+import { IEvent } from '../../interfaces/event.interface';
 import {
   Box,
   Container,
