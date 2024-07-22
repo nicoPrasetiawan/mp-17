@@ -66,9 +66,23 @@ class UserAction {
     }
   };
 
+  updateUser = async (
+    user_id: number,
+    updateData: { first_name?: string; last_name?: string; email?: string },
+  ) => {
+    try {
+      const updatedUser = await prisma.user.update({
+        where: { user_id },
+        data: updateData,
+      });
+      return updatedUser;
+    } catch (error) {
+      throw error;
+    }
+  };
+
   getUsers = async () => {
     const users = await prisma.user.findMany();
-
     return users;
   };
 }
