@@ -97,6 +97,14 @@ export class AuthAction {
               valid_until: validUntil,
             },
           });
+
+          await transaction.userDiscount.create({
+            data: {
+              user_id: newUser.user_id,
+              discount_percentage: 0.1,
+              is_redeemed: false,
+            },
+          });
         }
 
         return newUser;

@@ -165,7 +165,7 @@ const EventList: React.FC = () => {
               {
                 events.map(event => (
                   <Grid item xs={12} sm={6} md={4} key={event.event_id}>
-                    <Box width="100%" height="100%"> 
+                    <Box width="100%" height="250px"> 
                       <EventCard 
                         event_name={event.event_name} 
                         event_description={event.event_description} 

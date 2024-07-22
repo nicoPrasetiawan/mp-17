@@ -11,11 +11,13 @@ const HomeEOView: React.FC = () => {
   const { loginStatus, user } = useAppSelector((state) => state.auth);
   const router = useRouter();
 
-  useEffect(() => {
-    if (!loginStatus.isLogin || user.roleName != 'event_organizer') {
-      router.push('/');
-    }
-  }, [loginStatus, user]);
+  
+    // if (!loginStatus.isLogin 
+    //   || user.roleName != 'event_organizer'
+    // ) {
+    //   router.push('/');
+    // }
+
   
   return (
     <Container maxWidth="lg">

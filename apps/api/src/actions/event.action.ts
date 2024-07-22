@@ -58,7 +58,8 @@ class EventAction {
       start_date, 
       end_date,
       location_id,
-      total_seats
+      total_seats,
+      earlybird_promo 
     }: IEvent,
     {
       category_id
@@ -95,7 +96,8 @@ class EventAction {
           end_date,
           location_id,
           total_seats,
-          available_seats: total_seats
+          available_seats: total_seats,
+          earlybird_promo
         },
       });
 

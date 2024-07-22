@@ -7,6 +7,7 @@ export interface IEvent {
     end_date: Date;
     location_id: number;
     total_seats: number;
+    earlybird_promo: boolean;
   }
 
   export interface IEventCategory {

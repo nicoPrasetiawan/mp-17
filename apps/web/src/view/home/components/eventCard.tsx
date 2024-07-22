@@ -17,7 +17,7 @@ const EventCard: React.FC<EventCardProps> = ({ event_name, event_description, is
 
   return (
     <Box >
-    <Card variant="elevation" >
+    <Card variant="elevation" sx={{height:"250px"}}>
       <CardContent>
         <Typography variant="h6" component="div">
           {event_name}
