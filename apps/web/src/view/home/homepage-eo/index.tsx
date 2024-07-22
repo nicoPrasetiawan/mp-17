@@ -1,22 +1,16 @@
 "use client"
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Container, Box, Typography } from '@mui/material';
 import EventList from '../components/eventList';
 import CreateEventBanner from '../components/createEventBanner';
 import ReviewList from '../components/reviewList';
 import { useAppSelector } from '@/lib/hooks';
-import { useRouter } from 'next/navigation';
+import useAuthorizeUser from '@/lib/customHook/useAuthorizeUser';
 
 const HomeEOView: React.FC = () => {
-  const { loginStatus, user } = useAppSelector((state) => state.auth);
-  const router = useRouter();
+  const { user } = useAppSelector((state) => state.auth);
+  useAuthorizeUser()
 
-  useEffect(() => {
-    if (!loginStatus.isLogin) {
-      router.push('/');
-    }
-  }, [loginStatus]);
-  
   return (
     <Container maxWidth="lg">
       <Box sx={{ width: '100%', maxWidth: '1200px', mx: 'auto', padding: '16px' }}>

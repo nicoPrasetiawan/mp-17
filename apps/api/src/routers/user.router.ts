@@ -18,6 +18,11 @@ export class UserRouter {
       this.auth.verifyToken,
       this.userController.getUser,
     );
+    this.router.patch(
+      '/user/profile/:user_id',
+      this.auth.verifyToken,
+      this.userController.updateUser,
+    );
   }
 
   getRouter(): Router {
