@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Formik, Form, Field, FormikProps, FormikHelpers } from 'formik';
 import * as Yup from 'yup';
 import { ILogin } from '../../interfaces/login.interface';
@@ -14,13 +14,13 @@ import {
   DialogTitle,
   DialogContent,
   DialogContentText,
-  DialogActions,
   Avatar,
 } from '@mui/material';
-import { useRouter } from 'next/navigation';
-import { useAppDispatch } from '@/lib/hooks';
+import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { login } from '@/lib/features/auth/authSlices';
 import ErrorIcon from '@mui/icons-material/Error';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import { useRouter } from 'next/navigation';
 
 const loginSchema = Yup.object({
   username: Yup.string().required('Username is required'),
@@ -37,7 +37,9 @@ const initialValues: ILogin = {
 function Login() {
   const router = useRouter();
   const [open, setOpen] = useState(false);
+  const [greetingOpen, setGreetingOpen] = useState(false);
   const dispatch = useAppDispatch();
+  const { loginStatus, user } = useAppSelector((state) => state.auth);
 
   const handleSubmit = async (
     values: ILogin,
@@ -47,13 +49,29 @@ function Login() {
 
     try {
       await dispatch(login({ password, username }));
-      router.push('/redirect');
+      if (loginStatus.isLogin) {
+        setGreetingOpen(true);
+        setTimeout(() => {
+          setGreetingOpen(false);
+          router.push('/');
+        }, 1000); // Close the greeting dialog and redirect after 1 second
+      }
     } catch (error) {
       console.error(error);
       setOpen(true); // Open the dialog on error
       actions.setSubmitting(false);
     }
   };
+
+  useEffect(() => {
+    if (loginStatus.isLogin) {
+      setGreetingOpen(true);
+      setTimeout(() => {
+        setGreetingOpen(false);
+        router.push('/');
+      }, 1000); // Close the greeting dialog and redirect after 1 second
+    }
+  }, [loginStatus.isLogin, router]);
 
   const handleClose = () => {
     setOpen(false);
@@ -193,23 +211,56 @@ function Login() {
             </DialogContentText>
           </Box>
         </DialogContent>
-        <DialogActions sx={{ justifyContent: 'center' }}>
-          <Button
-            onClick={handleClose}
-            color="primary"
-            variant="contained"
-            autoFocus
+      </Dialog>
+      <Dialog
+        open={greetingOpen}
+        aria-labelledby="greeting-dialog-title"
+        aria-describedby="greeting-dialog-description"
+        sx={{
+          '.MuiPaper-root': {
+            backgroundColor: '#e0f7fa',
+            color: '#00796b',
+            borderRadius: '10px',
+            maxWidth: '500px',
+            minWidth: '300px',
+          },
+        }}
+      >
+        <DialogTitle
+          id="greeting-dialog-title"
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 1,
+            fontWeight: 'bold',
+            justifyContent: 'center',
+          }}
+        >
+          <CheckCircleIcon sx={{ color: '#4caf50', fontSize: 40 }} />
+          {'Welcome Back!'}
+        </DialogTitle>
+        <DialogContent>
+          <Box
             sx={{
-              mt: 2,
-              backgroundColor: 'primary.main',
-              '&:hover': {
-                backgroundColor: 'primary.dark',
-              },
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: 2,
             }}
           >
-            Close
-          </Button>
-        </DialogActions>
+            <DialogContentText
+              id="greeting-dialog-description"
+              sx={{
+                color: '#00796b',
+                textAlign: 'center',
+                fontSize: '1.2rem',
+                fontWeight: 'bold',
+              }}
+            >
+              {`Hello ${user?.username}, great to see you again!`}
+            </DialogContentText>
+          </Box>
+        </DialogContent>
       </Dialog>
     </Container>
   );

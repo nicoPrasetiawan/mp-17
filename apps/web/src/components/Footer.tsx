@@ -14,21 +14,7 @@ function Footer() {
   return (
     <>
       {path.startsWith('/dashboard') ? (
-        <>
-          <Box
-            component="footer"
-            sx={{
-              py: 3,
-              px: 2,
-              mt: 'auto',
-              backgroundColor: '#f1f1f1',
-            }}
-          >
-            <Typography variant="body2" color="text.secondary" align="right">
-              © mp-17 2024
-            </Typography>
-          </Box>
-        </>
+        <></>
       ) : (
         <Box
           component="footer"

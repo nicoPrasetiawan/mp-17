@@ -5,12 +5,12 @@ import {
   Grid,
   Card,
   CardContent,
-  Divider,
   CircularProgress,
   Alert,
   Button,
+  Divider,
 } from '@mui/material';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import EventIcon from '@mui/icons-material/Event';
 import { Event } from './types';
 
 interface EventListProps {
@@ -38,10 +38,44 @@ const EventList = ({ events, loading, error }: EventListProps) => {
   };
 
   return (
-    <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-      <Typography variant="h4" align="center" gutterBottom>
-        Your Events
-      </Typography>
+    <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', px: 2 }}>
+      <Box
+        sx={{
+          textAlign: 'center',
+          mb: 4,
+          py: 4,
+          background:
+            'linear-gradient(90deg, rgba(33,71,130,1) 0%, rgba(52,52,91,1) 27%, rgba(65,42,88,1) 69%, rgba(77,63,79,1) 100%)',
+          borderRadius: '8px',
+          boxShadow: 3,
+        }}
+      >
+        <Typography
+          variant="h4"
+          component="h1"
+          sx={{
+            fontWeight: 'bold',
+            color: 'white',
+            textTransform: 'uppercase',
+            mb: 2,
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            gap: 2,
+          }}
+        >
+          <EventIcon fontSize="large" />
+          Your Events
+        </Typography>
+        <Divider
+          sx={{
+            width: '80px',
+            height: '4px',
+            backgroundColor: 'white',
+            margin: '0 auto',
+          }}
+        />
+      </Box>
       {loading ? (
         <Box
           display="flex"
@@ -65,15 +99,20 @@ const EventList = ({ events, loading, error }: EventListProps) => {
             {events.slice(0, visibleEvents).map((event, index) => (
               <Grid item xs={12} sm={6} md={4} key={event.event_id || index}>
                 <Card
-                  variant="outlined"
                   sx={{
                     height: '100%',
                     position: 'relative',
-                    transition: 'transform 0.2s',
-                    '&:hover': { transform: 'scale(1.05)' },
+                    transition: 'transform 0.3s, box-shadow 0.3s',
+                    '&:hover': {
+                      transform: 'scale(1.03)',
+                      boxShadow: 6,
+                    },
+                    borderRadius: 2,
+                    display: 'flex',
+                    flexDirection: 'column',
                   }}
                 >
-                  <CardContent>
+                  <CardContent sx={{ flexGrow: 1 }}>
                     <Typography variant="h5" component="div" gutterBottom>
                       {event.event_name || 'N/A'}
                     </Typography>
@@ -108,7 +147,7 @@ const EventList = ({ events, loading, error }: EventListProps) => {
                     </Typography>
                     <Typography variant="body2">
                       <strong>Location:</strong>{' '}
-                      {event.location ? event.location.city_name : 'N/A'}
+                      {event.location.city_name || 'N/A'}
                     </Typography>
                     <Typography variant="body2">
                       <strong>Category:</strong>{' '}
@@ -125,18 +164,20 @@ const EventList = ({ events, loading, error }: EventListProps) => {
                       <strong>Available Seats:</strong>{' '}
                       {event.available_seats || 'N/A'}
                     </Typography>
-                    {isEventComplete(event.end_date) && (
-                      <CheckCircleIcon
-                        sx={{
-                          position: 'absolute',
-                          top: 8,
-                          right: 8,
-                          color: 'green',
-                          fontSize: 30,
-                        }}
-                      />
-                    )}
                   </CardContent>
+                  <Typography
+                    variant="caption"
+                    sx={{
+                      position: 'absolute',
+                      bottom: 8,
+                      right: 8,
+                      color: isEventComplete(event.end_date)
+                        ? 'success.main'
+                        : 'warning.main',
+                    }}
+                  >
+                    {isEventComplete(event.end_date) ? 'Completed' : 'Upcoming'}
+                  </Typography>
                 </Card>
               </Grid>
             ))}
