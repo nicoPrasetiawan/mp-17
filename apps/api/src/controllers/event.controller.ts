@@ -111,6 +111,35 @@ export class EventController {
     }
   };
 
+
+  async getEventsForReview(req: Request, res: Response, next: NextFunction) {
+    try {
+      const userId = Number(req.params.userId);
+      const events = await eventAction.getEventsForReview(userId);
+
+      res.status(200).json({
+        message: 'Events fetched successfully',
+        data: events
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async postReview(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { user_id, event_id, rating, comment } = req.body;
+      const review = await eventAction.postReview(user_id, event_id, rating, comment);
+
+      res.status(200).json({
+        message: 'Review posted successfully',
+        data: review
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+  
   // saya tambahin ini ya mba
   getEventsByOrganizerId = async (req: Request, res: Response, next: NextFunction) => {
     try {

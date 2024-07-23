@@ -24,7 +24,8 @@ model User {
   referralsGiven    Referral[] @relation("Referrer")
   referralsReceived Referral[] @relation("Referred")
   transaction       Transaction[]
-  userDiscounts  UserDiscount[]
+  userDiscounts     UserDiscount[]
+  reviews           Review[]
 
   @@index([username])
   @@index([email])
@@ -55,30 +56,6 @@ model Role {
   User      User[]
 }
 
-// model Promotion {
-//   promotion_id          Int              @id @default(autoincrement())
-//   event_id              Int
-//   discount_value        Float
-//   discount_category_id  Int              
-//   start_date            DateTime
-//   end_date              DateTime
-//   created_at            DateTime         @default(now())
-//   discountCategory      DiscountCategory @relation(fields: [discount_category_id], references: [id])
-//   event                 Event            @relation(fields: [event_id], references: [event_id])
-
-//   @@index([event_id])
-//   @@index([discount_category_id])
-// }
-
-// model DiscountCategory {
-//   id            Int       @id @default(autoincrement())
-//   name          String
-//   description   String?
-//   promotions    Promotion[]
-
-//   @@unique([name])
-// }
-
 model Event {
   event_id         Int         @id @default(autoincrement())
   organizer_id     Int
@@ -97,7 +74,7 @@ model Event {
   location         Location    @relation(fields: [location_id], references: [location_id])
   categories       Event_Category[]
   transactions     Transaction[]
-  // promotions       Promotion[]
+  reviews          Review[]
 }
 
 model Location {
@@ -121,12 +98,6 @@ model Event_Category {
   @@id([event_id, category_id])
 }
 
-// model Ticket_Type {
-//   type_id    Int     @id @default(autoincrement())
-//   type_name  String  // Can be "Free" or "Paid"
-//   price      Float
-//   // tickets    Ticket[]
-// }
 
 model Transaction {
   transaction_id  Int     @id @default(autoincrement())
@@ -141,7 +112,6 @@ model Transaction {
   ticket_status   String  // Can be "pending" or "success-paid"
   event           Event   @relation(fields: [event_id], references: [event_id])
   user            User    @relation(fields: [user_id], references: [user_id])
-  // ticket_type     TicketType @relation(fields: [type_id], references: [type_id])
 }
 
 model UserDiscount {
@@ -153,4 +123,15 @@ model UserDiscount {
   user               User     @relation(fields: [user_id], references: [user_id])
 
   @@index([user_id])
+}
+
+model Review {
+  review_id  Int      @id @default(autoincrement())
+  user_id    Int
+  event_id   Int
+  rating     Int
+  comment    String   @db.VarChar(2000)
+  created_at DateTime @default(now())
+  user  User  @relation(fields: [user_id], references: [user_id])
+  event Event @relation(fields: [event_id], references: [event_id])
 }
