@@ -1,13 +1,13 @@
-import HomeNonUserView from '@/view/home/homepage-non';
+import HomeView from '@/view/home';
+import HeroSection from '@/view/home/components/heroSection';
 
-
-function NonUserPage() {
+function Home() {
   return (
     <main>
-      
-      <HomeNonUserView/>
+      <HeroSection />
+      <HomeView />
     </main>
   );
 }
 
-export default NonUserPage;
+export default Home;

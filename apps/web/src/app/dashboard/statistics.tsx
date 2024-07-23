@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Box, Typography, CircularProgress, Alert, Grid } from '@mui/material';
+import { Box, Typography, CircularProgress, Alert, Grid, Divider } from '@mui/material';
+import BarChartIcon from '@mui/icons-material/BarChart';
 import { Bar, Pie } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
@@ -137,9 +138,42 @@ const Statistics = ({ organizer_id }: StatisticsProps) => {
 
   return (
     <Box sx={{ p: 2 }}>
-      <Typography variant="h4" align="center" gutterBottom>
-        Statistics
-      </Typography>
+      <Box
+        sx={{
+          textAlign: 'center',
+          mb: 4,
+          py: 4,
+          background: 'linear-gradient(90deg, rgba(33,71,130,1) 0%, rgba(52,52,91,1) 27%, rgba(65,42,88,1) 69%, rgba(77,63,79,1) 100%)',
+          borderRadius: '8px',
+          boxShadow: 3,
+        }}
+      >
+        <Typography
+          variant="h4"
+          component="h1"
+          sx={{
+            fontWeight: 'bold',
+            color: 'white',
+            textTransform: 'uppercase',
+            mb: 2,
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            gap: 2,
+          }}
+        >
+          <BarChartIcon fontSize="large" />
+          Statistics
+        </Typography>
+        <Divider
+          sx={{
+            width: '80px',
+            height: '4px',
+            backgroundColor: 'white',
+            margin: '0 auto',
+          }}
+        />
+      </Box>
       <Grid container spacing={4} justifyContent="center">
         <Grid item xs={12} md={6}>
           <Box sx={{ textAlign: 'center' }}>
