@@ -8,16 +8,17 @@ interface EventCardProps {
   event_description: string;
   isFree?: boolean;
   event_id: number;
+  onBuyTicket: (event_id: number) => void;
 }
 
-const EventCard: React.FC<EventCardProps> = ({ event_name, event_description, isFree = false, event_id }) => {
+const EventCard: React.FC<EventCardProps> = ({ event_name, event_description,onBuyTicket , event_id }) => {
   const router = useRouter();
 
 
 
   return (
     <Box >
-    <Card variant="elevation" >
+    <Card variant="elevation" sx={{height:"250px"}}>
       <CardContent>
         <Typography variant="h6" component="div">
           {event_name}
@@ -27,7 +28,7 @@ const EventCard: React.FC<EventCardProps> = ({ event_name, event_description, is
         </Typography>
         <Box sx={{ mt: 2, display: 'flex', justifyContent: 'space-between' }}>
            
-            <Button variant="contained">Buy ticket</Button>
+            <Button onClick={() => onBuyTicket(event_id)} variant="contained">Buy ticket</Button>
           
         </Box>
       </CardContent>

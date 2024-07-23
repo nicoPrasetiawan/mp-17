@@ -1,11 +1,12 @@
 "use client"
 import React from 'react';
-import { Container, Box, Typography } from '@mui/material';
+import { Container, Box, Typography, Button } from '@mui/material';
 import EventList from '../components/eventList';
 
 import ReviewList from '../components/reviewList';
 import { useAppSelector } from '@/lib/hooks';
 import useAuthorizeUser from '@/lib/customHook/useAuthorizeUser';
+import Link from 'next/link';
 
 const HomeUserView: React.FC = () => {
   const { user } = useAppSelector((state) => state.auth);
@@ -21,6 +22,11 @@ const HomeUserView: React.FC = () => {
         <Box sx={{ width: '100%' }}>
           <EventList />
         </Box>
+        <Link href="/review" passHref>
+          <Button variant="contained" size="large">
+            Rate Your Review!
+          </Button>
+        </Link>
         <ReviewList/>
       </Box>
     </Container>

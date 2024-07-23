@@ -12,7 +12,7 @@ const CreateEventBanner: React.FC = () => {
         <Button variant="contained" size="large">
           Create event
         </Button>
-        </Link>
+      </Link>
     </Box>
   );
 };

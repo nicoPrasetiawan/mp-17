@@ -20,7 +20,8 @@ import {
   DialogTitle,
   DialogContent,
   DialogContentText,
-  DialogActions,
+  DialogActions, FormControlLabel, 
+  Checkbox
 } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
@@ -39,6 +40,7 @@ const eventSchema = Yup.object({
   location: Yup.string().required('Location is required'),
   category: Yup.string().required('Category is required'),
   totalSeats: Yup.number().required('Number of seats is required').min(1, 'Number of seats must be at least 1'),
+  earlybird_promo: Yup.boolean().required(),
 });
 
 const initialEventValues: IEvent = {
@@ -52,6 +54,7 @@ const initialEventValues: IEvent = {
   location: 0,
   category: 0,
   totalSeats: 0,
+  earlybird_promo: false,
 };
 
 
@@ -68,6 +71,7 @@ const createEvent = async ({
     location,
     category,
     totalSeats,
+    earlybird_promo
 }: IEvent) => {
   const event = await axios.post('http://localhost:8000/api/events', {
     organizer_id: organizerId,
@@ -80,7 +84,8 @@ const createEvent = async ({
     location_id: location,
     // category,
     total_seats: totalSeats,
-    category_id: category
+    category_id: category,
+    earlybird_promo
   });
   return event;
 };
@@ -385,6 +390,20 @@ function CreateEvent() {
                     value={values.totalSeats}
                     error={touched.totalSeats && Boolean(errors.totalSeats)}
                     helperText={touched.totalSeats && errors.totalSeats}
+                  />
+                  <FormControlLabel
+                    control={
+                      <Field
+                        as={Checkbox}
+                        name="earlybird_promo"
+                        color="primary"
+                        checked={values.earlybird_promo}
+                        onChange={(e: any) => {
+                          setFieldValue('earlybird_promo', e.target.checked);
+                        }}
+                      />
+                    }
+                    label="Early Bird Promotion"
                   />
                   <Button
                     type="submit"

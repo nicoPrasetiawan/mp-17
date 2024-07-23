@@ -1,4 +1,5 @@
 export interface IEvent {
+    earlybird_promo: any;
     organizerId: number;
     eventName: string;
     eventDescription: string;
