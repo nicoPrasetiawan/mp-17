@@ -246,6 +246,47 @@ class EventAction {
     }
   };
 
+  getEventsForReview = async (userId: number) => {
+    try {
+      const events = await prisma.transaction.findMany({
+        where: {
+          user_id: userId,
+          ticket_status: 'success-paid',
+          event: {
+            end_date: {
+              lt: new Date()
+            }
+          }
+        },
+        include: {
+          event: true
+        }
+      });
+
+      return events.map(transaction => transaction.event);
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  postReview = async (user_id: number, event_id: number, rating: number, comment: string) => {
+    try {
+      const review = await prisma.review.create({
+        data: {
+          user_id,
+          event_id,
+          rating,
+          comment,
+          created_at: new Date()
+        }
+      });
+
+      return review;
+    } catch (error) {
+      throw error;
+    }
+  };
+
 // saya tambahin ini ya mba
 findEventsByOrganizerId = async (query: any) => {
   const { organizer_id } = query;
