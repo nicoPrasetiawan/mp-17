@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import axios from 'axios';
 import {
   Container,
   Box,
@@ -10,25 +11,83 @@ import {
   Paper,
   Grid,
   Avatar,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
 } from '@mui/material';
-import { useAppSelector } from '@/lib/hooks';
+import { useAppSelector, useAppDispatch } from '@/lib/hooks';
 import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import ErrorIcon from '@mui/icons-material/Error';
+import WarningIcon from '@mui/icons-material/Warning';
+import { updateUserProfile } from '@/lib/features/auth/authSlices';
 
 const UserProfile = () => {
   const { user } = useAppSelector((state) => state.auth);
+  const dispatch = useAppDispatch();
   const [isEditing, setIsEditing] = useState(false);
   const [editedFirstName, setEditedFirstName] = useState(user.firstName);
   const [editedLastName, setEditedLastName] = useState(user.lastName);
   const [editedEmail, setEditedEmail] = useState(user.email);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [openSuccessDialog, setOpenSuccessDialog] = useState(false);
+  const [openErrorDialog, setOpenErrorDialog] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleEditToggle = () => {
     setIsEditing(!isEditing);
   };
 
-  const handleSave = () => {
-    // logic to save changes after edit
-    setIsEditing(false);
+  const handleSave = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.patch(
+        `http://localhost:8000/api/user/profile/${user.userId}`,
+        {
+          first_name: editedFirstName,
+          last_name: editedLastName,
+          email: editedEmail,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+        },
+      );
+
+      if (response.status === 200) {
+        setOpenDialog(false);
+        setIsEditing(false);
+        setOpenSuccessDialog(true);
+
+        // Dispatch action to update user in the store
+        dispatch(
+          updateUserProfile({
+            firstName: editedFirstName,
+            lastName: editedLastName,
+            email: editedEmail,
+          }),
+        );
+      } else {
+        setOpenErrorDialog(true);
+      }
+    } catch (err) {
+      console.error('Failed to update profile:', err);
+      setOpenErrorDialog(true);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDialogClose = (confirm: boolean) => {
+    if (confirm) {
+      handleSave();
+    } else {
+      setOpenDialog(false);
+    }
   };
 
   const formatCurrency = (value: number) => {
@@ -154,9 +213,10 @@ const UserProfile = () => {
               <Button
                 variant="contained"
                 color="primary"
-                onClick={handleSave}
+                onClick={() => setOpenDialog(true)}
                 startIcon={<SaveIcon />}
                 sx={{ px: 4 }}
+                disabled={loading}
               >
                 Save
               </Button>
@@ -174,6 +234,116 @@ const UserProfile = () => {
           </Grid>
         </Grid>
       </Paper>
+
+      <Dialog open={openDialog} onClose={() => handleDialogClose(false)}>
+        <DialogTitle>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <WarningIcon sx={{ color: 'orange' }} />
+            Confirm Changes
+          </Box>
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Are you sure you want to save the changes?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => handleDialogClose(false)} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={() => handleDialogClose(true)} color="primary">
+            Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog
+        open={openSuccessDialog}
+        onClose={() => handleDialogClose(false)}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+        sx={{
+          '.MuiPaper-root': {
+            backgroundColor: '#e8f5e9',
+            color: '#2e7d32',
+            borderRadius: '10px',
+            maxWidth: '500px',
+            minWidth: '300px',
+          },
+        }}
+      >
+        <DialogTitle id="alert-dialog-title">
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <CheckCircleIcon sx={{ color: '#2e7d32' }} />
+            {'Profile Update Success'}
+          </Box>
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Your profile has been updated successfully.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => setOpenSuccessDialog(false)}
+            color="primary"
+            variant="contained"
+            autoFocus
+            sx={{
+              backgroundColor: 'primary.main',
+              '&:hover': {
+                backgroundColor: 'primary.dark',
+              },
+            }}
+          >
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog
+        open={openErrorDialog}
+        onClose={() => handleDialogClose(false)}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+        sx={{
+          '.MuiPaper-root': {
+            backgroundColor: '#ffebee',
+            color: '#d32f2f',
+            borderRadius: '10px',
+            maxWidth: '500px',
+            minWidth: '300px',
+          },
+        }}
+      >
+        <DialogTitle id="alert-dialog-title">
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <ErrorIcon sx={{ color: '#d32f2f' }} />
+            {'Update Error'}
+          </Box>
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Failed to update profile. Please try again later.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => setOpenErrorDialog(false)}
+            color="primary"
+            variant="contained"
+            autoFocus
+            sx={{
+              backgroundColor: 'primary.main',
+              '&:hover': {
+                backgroundColor: 'primary.dark',
+              },
+            }}
+          >
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Container>
   );
 };

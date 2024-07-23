@@ -1,21 +1,16 @@
 "use client"
-import React, { useEffect } from 'react';
-import { Container, Box, Typography } from '@mui/material';
+import React from 'react';
+import { Container, Box, Typography, Button } from '@mui/material';
 import EventList from '../components/eventList';
 
 import ReviewList from '../components/reviewList';
 import { useAppSelector } from '@/lib/hooks';
-import { useRouter } from 'next/navigation';
+import useAuthorizeUser from '@/lib/customHook/useAuthorizeUser';
+import Link from 'next/link';
 
 const HomeUserView: React.FC = () => {
-  const { loginStatus, user } = useAppSelector((state) => state.auth);
-  const router = useRouter();
-
-  useEffect(() => {
-    if (!loginStatus.isLogin || user.roleName != 'user') {
-      router.push('/');
-    }
-  }, [loginStatus, user]);
+  const { user } = useAppSelector((state) => state.auth);
+  useAuthorizeUser()
   
   return (
     <Container maxWidth="lg">
@@ -27,6 +22,11 @@ const HomeUserView: React.FC = () => {
         <Box sx={{ width: '100%' }}>
           <EventList />
         </Box>
+        <Link href="/review" passHref>
+          <Button variant="contained" size="large">
+            Rate Your Review!
+          </Button>
+        </Link>
         <ReviewList/>
       </Box>
     </Container>

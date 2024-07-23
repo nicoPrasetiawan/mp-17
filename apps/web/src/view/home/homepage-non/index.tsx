@@ -1,14 +1,15 @@
 "use client"
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Container, Box, Typography } from '@mui/material';
 import EventList from '../components/eventList';
 
 import ReviewList from '../components/reviewList';
 import { useAppSelector } from '@/lib/hooks';
-import { useRouter } from 'next/navigation';
+import useAuthorizeUser from '@/lib/customHook/useAuthorizeUser';
 
 const HomeNonUserView: React.FC = () => {
-  const {  user } = useAppSelector((state) => state.auth);
+  const { user } = useAppSelector((state) => state.auth);
+  useAuthorizeUser()
   
   return (
     <Container maxWidth="lg">

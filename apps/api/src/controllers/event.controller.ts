@@ -41,6 +41,35 @@ export class EventController {
     }
   };
 
+  createTransaction = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { user_id, event_id, number_of_ticket } = req.body;
+      const transaction = await eventAction.createTransaction(user_id, event_id, number_of_ticket);
+
+
+      return res.status(201).json({
+        message: 'Create transaction success',
+        data: transaction,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  confirmPayment = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { transaction_id } = req.params;
+      console.log('transaction_id',transaction_id)
+      const transaction = await eventAction.confirmPayment(Number(transaction_id));
+      res.status(200).json({
+        message: 'Payment confirmed successfully',
+        data: transaction,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
   getEvents = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const {
@@ -70,11 +99,11 @@ export class EventController {
 
   getEvent = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { user_id } = req.params;
-      const event = await eventAction.findEventById(Number(user_id));
+      const { event_id } = req.params;
+      const event = await eventAction.findEventById(Number(event_id));
 
       res.status(200).json({
-        message: 'Get user success',
+        message: 'Get event success',
         data: event,
       });
     } catch (error) {

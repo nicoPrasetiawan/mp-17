@@ -101,7 +101,7 @@ export class AuthAction {
           await transaction.userDiscount.create({
             data: {
               user_id: newUser.user_id,
-              discount_percentage: 0.1,
+              discount_percentage: 10,
               is_redeemed: false,
             },
           });

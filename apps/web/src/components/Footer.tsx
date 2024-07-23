@@ -24,8 +24,8 @@ function Footer() {
               backgroundColor: '#f1f1f1',
             }}
           >
-            <Typography variant="body2" color="text.secondary" align="center">
-              © mp-17 2024. All rights reserved.
+            <Typography variant="body2" color="text.secondary" align="right">
+              © mp-17 2024
             </Typography>
           </Box>
         </>

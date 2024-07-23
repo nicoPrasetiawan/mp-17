@@ -138,7 +138,7 @@ model Transaction {
   discount_applied Float
   earlybird_applied Float
   points_redeemed Int
-  ticket_status   String  // Can be "booked" or "canceled"
+  ticket_status   String  // Can be "pending" or "success-paid"
   event           Event   @relation(fields: [event_id], references: [event_id])
   user            User    @relation(fields: [user_id], references: [user_id])
   // ticket_type     TicketType @relation(fields: [type_id], references: [type_id])

@@ -7,6 +7,7 @@ import { Grid, TextField, Box, CircularProgress, MenuItem, Select, InputLabel, F
 import CustomPagination from './customPagination';
 import debounce from 'lodash/debounce';
 import { locations, categories } from '../../../lib/constant';
+import { useRouter } from 'next/navigation';
 
 interface Event {
   event_id: number;
@@ -86,6 +87,11 @@ const EventList: React.FC = () => {
 
   const handleCategoryChange = (e: SelectChangeEvent<string>) => {
     setCategory(e.target.value);
+  };
+  const router = useRouter();
+  
+  const handleBuyTicket = (event_id: number) => {
+    router.push(`/transaction?event_id=${event_id}`);
   };
 
   return (
@@ -170,6 +176,7 @@ const EventList: React.FC = () => {
                         event_name={event.event_name} 
                         event_description={event.event_description} 
                         event_id={event.event_id} 
+                        onBuyTicket={handleBuyTicket}
                       />
                     </Box>
                   </Grid>

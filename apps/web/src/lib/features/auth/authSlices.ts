@@ -60,6 +60,19 @@ export const authSlice = createSlice({
       state.user = user;
       state.loginStatus.isLogin = true;
     },
+
+    updateUserProfile: (state: Auth, action: PayloadAction<Partial<User>>) => {
+      state.user = { ...state.user, ...action.payload };
+    },
+
+    // untuk handle nyimpen value user
+    loadUserFromLocalStorage: (state: Auth, action: PayloadAction<User>) => {
+      const user = action.payload;
+      if (user) {
+        state.user = user;
+        state.loginStatus.isLogin = true;
+      }
+    },
   },
 });
 
@@ -127,6 +140,7 @@ export const login =
           roleName: payload?.role_name,
         }),
       );
+      localStorage.setItem('user', JSON.stringify(payload)); // Simpan user ke localStorage
       localStorage.setItem('token', String(data?.data));
     } catch (error) {
       throw error;
@@ -136,6 +150,7 @@ export const login =
 export const logout = () => async (dispatch: Dispatch) => {
   try {
     dispatch(logOutState());
+    localStorage.removeItem('user'); // Hapus user dari localStorage
     localStorage.removeItem('token');
   } catch (error) {
     console.log(error);
@@ -163,12 +178,46 @@ export const checkToken = (token: string) => async (dispatch: Dispatch) => {
         roleName: payload.role_name,
       }),
     );
+    localStorage.setItem('user', JSON.stringify(payload)); // Simpan user ke localStorage
     localStorage.setItem('token', String(data?.data));
   } catch (error) {
     console.log(error);
   }
 };
 
-export const { loginState, logOutState, tokenValidState } = authSlice.actions;
+export const updateUser =
+  (userId: number, updateData: Partial<User>) => async (dispatch: Dispatch) => {
+    try {
+      const { data } = await instance.patch(
+        `/user/profile/${userId}`,
+        updateData,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+        },
+      );
+      dispatch(updateUserProfile(updateData));
+    } catch (error) {
+      throw error;
+    }
+  };
+
+// tambahan
+export const loadUser = () => (dispatch: Dispatch) => {
+  const user = localStorage.getItem('user');
+  if (user) {
+    dispatch(loadUserFromLocalStorage(JSON.parse(user)));
+  }
+};
+
+export const {
+  loginState,
+  logOutState,
+  tokenValidState,
+  updateUserProfile,
+  //tambahan
+  loadUserFromLocalStorage,
+} = authSlice.actions;
 
 export default authSlice.reducer;

@@ -8,17 +8,32 @@ import {
   AppBar,
   IconButton,
   Container,
+  Menu,
+  MenuItem,
+  Divider,
+  ListItemIcon,
+  ListItemText,
 } from '@mui/material';
-import { Menu as MenuIcon } from '@mui/icons-material';
+import {
+  Menu as MenuIcon,
+  Home as HomeIcon,
+  Person as PersonIcon,
+  Dashboard as DashboardIcon,
+  Event as EventIcon,
+  Logout as LogoutIcon,
+} from '@mui/icons-material';
 import { styled, useTheme } from '@mui/material/styles';
 import DrawerComponent from './drawer';
 import EventList from './evenList';
 import AttendeeRegistrations from './attendeeRegistrations';
 import Transactions from './transactions';
 import Statistics from './statistics';
-import { useAppSelector } from '@/lib/hooks';
+import { useAppSelector, useAppDispatch } from '@/lib/hooks';
 import axios from 'axios';
 import { Event } from './types';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { logout } from '@/lib/features/auth/authSlices';
 
 const drawerWidth = 205;
 
@@ -88,6 +103,125 @@ function Dashboard() {
   const { loginStatus, user } = useAppSelector((state) => state.auth);
   const organizer_id = user?.userId;
   const theme = useTheme();
+  const router = useRouter();
+  const dispatch = useAppDispatch();
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+
+  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleLogout = () => {
+    dispatch(logout());
+    router.push('/');
+    handleClose();
+  };
+
+  const openMenu = Boolean(anchorEl);
+  const homeLink = user.roleId === 2 ? '/eo' : '/user';
+
+  const menuItems = [
+    <MenuItem
+      key="home"
+      component={Link}
+      href={homeLink}
+      onClick={handleClose}
+      sx={{
+        borderRadius: '5px',
+        '&:hover': { backgroundColor: '#f0f0f0' },
+      }}
+    >
+      <ListItemIcon>
+        <HomeIcon />
+      </ListItemIcon>
+      <ListItemText primary="Home" />
+    </MenuItem>,
+    <Divider key="divider-home" />,
+    <MenuItem
+      key="profile"
+      component={Link}
+      href="/user-profile"
+      onClick={handleClose}
+      sx={{
+        borderRadius: '5px',
+        '&:hover': { backgroundColor: '#f0f0f0' },
+      }}
+    >
+      <ListItemIcon>
+        <PersonIcon />
+      </ListItemIcon>
+      <ListItemText primary="Profile" />
+    </MenuItem>,
+    <Divider key="divider-profile" />,
+  ];
+
+  if (user.roleId === 2) {
+    menuItems.push(
+      <MenuItem
+        key="dashboard"
+        component={Link}
+        href="/dashboard"
+        onClick={handleClose}
+        sx={{
+          borderRadius: '5px',
+          '&:hover': { backgroundColor: '#f0f0f0' },
+        }}
+      >
+        <ListItemIcon>
+          <DashboardIcon />
+        </ListItemIcon>
+        <ListItemText primary="Dashboard" />
+      </MenuItem>,
+      <Divider key="divider-dashboard" />,
+      <MenuItem
+        key="create-event"
+        component={Link}
+        href="/create-event"
+        onClick={handleClose}
+        sx={{
+          borderRadius: '5px',
+          '&:hover': { backgroundColor: '#f0f0f0' },
+        }}
+      >
+        <ListItemIcon>
+          <EventIcon />
+        </ListItemIcon>
+        <ListItemText primary="Create Event" />
+      </MenuItem>,
+      <Divider key="divider-create-event" />,
+    );
+  }
+
+  menuItems.push(
+    <MenuItem
+      key="logout"
+      onClick={handleLogout}
+      sx={{
+        borderRadius: '5px',
+        '&:hover': { backgroundColor: '#f0f0f0' },
+      }}
+    >
+      <ListItemIcon>
+        <LogoutIcon />
+      </ListItemIcon>
+      <ListItemText primary="Logout" />
+    </MenuItem>,
+  );
+
+  useEffect(() => {
+    const checkUserRole = () => {
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      if (user.role_id !== 2) {
+        router.push('/');
+      }
+    };
+
+    checkUserRole();
+  }, [router]);
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -157,9 +291,52 @@ function Dashboard() {
           >
             <MenuIcon />
           </IconButton>
-          <Typography variant="h5" noWrap component="div">
+          <Typography variant="h5" noWrap component="div" sx={{ flexGrow: 1 }}>
             DASHBOARD
           </Typography>
+          <IconButton
+            aria-controls="simple-menu"
+            aria-haspopup="true"
+            onClick={handleClick}
+            sx={{
+              textTransform: 'none',
+              border: '1px solid black',
+              borderRadius: '20px',
+              padding: '6px 16px',
+              backgroundColor: 'transparent',
+              '&:hover': {
+                backgroundColor: 'rgba(0, 0, 0, 0.04)',
+              },
+              display: 'flex',
+              alignItems: 'center',
+            }}
+          >
+            <MenuIcon sx={{ color: '#000' }} />
+          </IconButton>
+          <Menu
+            id="simple-menu"
+            anchorEl={anchorEl}
+            keepMounted
+            open={openMenu}
+            onClose={handleClose}
+            anchorOrigin={{
+              vertical: 'bottom',
+              horizontal: 'center',
+            }}
+            transformOrigin={{
+              vertical: 'top',
+              horizontal: 'center',
+            }}
+            sx={{
+              '.MuiPaper-root': {
+                borderRadius: '10px',
+                boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)',
+                animation: 'fadeIn 0.3s ease-in-out',
+              },
+            }}
+          >
+            {menuItems}
+          </Menu>
         </Toolbar>
       </AppBarStyled>
       <Box sx={{ display: 'flex', flexGrow: 1 }}>

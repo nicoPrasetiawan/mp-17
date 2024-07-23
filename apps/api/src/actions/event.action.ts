@@ -39,7 +39,7 @@ class EventAction {
     try {
       const event = await prisma.event.findUnique({
         where: {
-          event_id,
+          event_id : Number(event_id),
         },
       });
 
@@ -153,6 +153,97 @@ class EventAction {
     });
 
     return { events, total_count };
+  };
+
+  createTransaction = async (user_id: number, event_id: number, number_of_ticket: number) => {
+    try {
+      const userDiscount = await prisma.userDiscount.findFirst({
+        where: {
+          user_id: user_id,
+          is_redeemed: false,
+        },
+      });
+
+      const event = await prisma.event.findUnique({
+        where: {
+          event_id: event_id,
+        },
+      });
+
+      if (!event) {
+        throw new Error('Event not found');
+      }
+
+      let final_price = event.original_price;
+      let discount_applied = 0;
+      let earlybird_applied = 0;
+      let type = 'free';
+
+      if (event.original_price != 0) {
+        type = 'paid';
+        if (userDiscount) {
+          discount_applied = (event.original_price * userDiscount.discount_percentage.toNumber()) / 100;
+          final_price -= discount_applied;
+          
+        }
+
+        const currentDate = new Date();
+        console.log('currentdate',currentDate)
+        const startDate = new Date(event.start_date);
+        console.log(startDate)
+
+        const thirtyDaysBeforeStart = new Date(startDate.getTime() - (30 * 24 * 60 * 60 * 1000));
+        console.log(thirtyDaysBeforeStart)
+
+
+        if (event.earlybird_promo && currentDate > thirtyDaysBeforeStart) {
+          earlybird_applied = (final_price * 0.07);
+          final_price -= earlybird_applied;
+        }
+      } 
+
+      final_price = number_of_ticket*final_price
+
+      const transaction = await prisma.transaction.create({
+        data: {
+          event_id: event_id,
+          user_id: user_id,
+          number_of_ticket: number_of_ticket,
+          type: type,
+          final_price: final_price,
+          discount_applied: discount_applied,
+          earlybird_applied: earlybird_applied,
+          points_redeemed: 0,
+          ticket_status: 'pending',
+        },
+      });
+
+      if (userDiscount) {
+        await prisma.userDiscount.update({
+          where: {
+            discount_id: userDiscount.discount_id,
+          },
+          data: {
+            is_redeemed: true,
+          },
+        });
+      }
+
+      return transaction;
+    } catch (error) {
+      throw error;
+    }
+  };
+  confirmPayment = async (transaction_id: number) => {
+    try {
+      const transaction = await prisma.transaction.update({
+        where: { transaction_id },
+        data: { ticket_status: 'success-paid' },
+      });
+      return transaction;
+    } catch (error) {
+      throw error;
+    }
   };
 
 // saya tambahin ini ya mba
