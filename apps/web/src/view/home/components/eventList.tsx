@@ -3,7 +3,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import EventCard from './eventCard';
-import { Grid, TextField, Box, CircularProgress, MenuItem, Select, InputLabel, FormControl, SelectChangeEvent, Typography } from '@mui/material';
+import QuickFilter from './quickFilter';
+import { Grid, TextField, Box, CircularProgress, MenuItem, Select, InputLabel, FormControl, SelectChangeEvent } from '@mui/material';
 import CustomPagination from './customPagination';
 import debounce from 'lodash/debounce';
 import { locations, categories } from '../../../lib/constant';
@@ -90,6 +91,12 @@ const EventList: React.FC = () => {
   const handleCategoryChange = (e: SelectChangeEvent<string>) => {
     setCategory(e.target.value);
   };
+
+  const handleCategoryIconClick = (categoryValue: string) => {
+    setCategory(categoryValue);
+    fetchEvents(currentPage, searchText, location, categoryValue, false);
+  };
+
   const router = useRouter();
   
   const handleBuyTicket = (event_id: number) => {
@@ -102,7 +109,8 @@ const EventList: React.FC = () => {
   };
 
   return (
-    <Box sx={{ mb:18 }}>
+    <Box sx={{ mb: 18 }}>
+      <QuickFilter onCategoryClick={handleCategoryIconClick} />
       <TextField
         label="Search Events"
         variant="outlined"
@@ -110,6 +118,12 @@ const EventList: React.FC = () => {
         margin="normal"
         value={searchText}
         onChange={handleSearch}
+        sx={{
+          borderRadius: '25px',
+          '& .MuiOutlinedInput-root': {
+            borderRadius: '25px',
+          },
+        }}
       />
       <Box display="flex" justifyContent="space-between" marginBottom="16px">
         <FormControl variant="outlined" margin="normal" fullWidth sx={{ marginRight: 1 }}>
@@ -119,6 +133,12 @@ const EventList: React.FC = () => {
             value={location}
             onChange={handleLocationChange}
             label="Location"
+            sx={{
+              borderRadius: '25px',
+              '& .MuiOutlinedInput-root': {
+                borderRadius: '25px',
+              },
+            }}
           >
             <MenuItem value="">
               <em>None</em>
@@ -137,6 +157,12 @@ const EventList: React.FC = () => {
             value={category}
             onChange={handleCategoryChange}
             label="Category"
+            sx={{
+              borderRadius: '25px',
+              '& .MuiOutlinedInput-root': {
+                borderRadius: '25px',
+              },
+            }}
           >
             <MenuItem value="">
               <em>None</em>
@@ -164,63 +190,61 @@ const EventList: React.FC = () => {
             lg: '600px', // On large screens, max width is 1200px
           },
           mx: '3px',
-          my:'3px'
+          my: '3px'
         }}
       >
-      {initialLoading ? (
-        <Box width="100%" display="flex" justifyContent="center" alignItems="center" height="50vh">
-          <CircularProgress />
-        </Box>
-      ) : (
-        <>
-        <Box
-          width="100%"
-          sx={{
-            minHeight: '700px', // Set a minimum height for the event list container
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'space-between'
-          }}
-        >
-        <Grid container spacing={2} justifyContent="space-between" flexGrow={1}>
-          {
-            events.map(event => (
-              <Grid item xs={12} sm={6} md={4} key={event.event_id}>
-                <Box width="100%" height="100%"> 
-                  <EventCard 
-                    event_name={event.event_name} 
-                    event_description={event.event_description} 
-                    event_id={event.event_id} 
-                    original_price={event.original_price}
-                    event_location={getCityName(event.location_id)}
-                    onBuyTicket={handleBuyTicket}
-                  />
-                </Box>
-              </Grid>
-            ))
-          }
-          {events.length > 0 && events.length < 6 && Array.from(Array(6 - events.length).keys()).map((_, index) => (
-            <Grid item xs={12} sm={6} md={4} key={`placeholder-${index}`}>
-              {/* <Box width="100%" height="250px" bgcolor="#f5f5f5"></Box> */}
-            </Grid>
-          ))}
-        </Grid>
-        {totalPages > 1 && (
-          <Box mt={1} display="flex" justifyContent="center">
-            <CustomPagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
+        {initialLoading ? (
+          <Box width="100%" display="flex" justifyContent="center" alignItems="center" height="50vh">
+            <CircularProgress />
           </Box>
+        ) : (
+          <>
+            <Box
+              width="100%"
+              sx={{
+                minHeight: '700px', // Set a minimum height for the event list container
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-between'
+              }}
+            >
+              <Grid container spacing={2} justifyContent="space-between" flexGrow={1}>
+                {events.map(event => (
+                  <Grid item xs={12} sm={6} md={4} key={event.event_id}>
+                    <Box width="100%" height="100%">
+                      <EventCard 
+                        event_name={event.event_name} 
+                        event_description={event.event_description} 
+                        event_id={event.event_id} 
+                        original_price={event.original_price}
+                        event_location={getCityName(event.location_id)}
+                        onBuyTicket={handleBuyTicket}
+                      />
+                    </Box>
+                  </Grid>
+                ))}
+                {events.length > 0 && events.length < 6 && Array.from(Array(6 - events.length).keys()).map((_, index) => (
+                  <Grid item xs={12} sm={6} md={4} key={`placeholder-${index}`}>
+                    {/* <Box width="100%" height="250px" bgcolor="#f5f5f5"></Box> */}
+                  </Grid>
+                ))}
+              </Grid>
+              {totalPages > 1 && (
+                <Box mt={1} display="flex" justifyContent="center">
+                  <CustomPagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
+                </Box>
+              )}
+            </Box>
+            {pageLoading && (
+              <Box display="flex" justifyContent="center" alignItems="center" mt={2}>
+                <CircularProgress size={24} />
+              </Box>
+            )}
+          </>
         )}
       </Box>
-      {pageLoading && (
-        <Box display="flex" justifyContent="center" alignItems="center" mt={2}>
-          <CircularProgress size={24} />
-        </Box>
-      )}
-    </>
-  )}
-</Box>
-</Box>
-);
+    </Box>
+  );
 };
 
 export default EventList;
