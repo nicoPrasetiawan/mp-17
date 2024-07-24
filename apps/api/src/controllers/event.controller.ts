@@ -142,7 +142,21 @@ export class EventController {
     } catch (error) {
       next(error);
     }
-  }
+  };
+
+  getUserDiscount = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { user_id } = req.params;
+      const userDiscount = await eventAction.getUserDiscount(Number(user_id));
+  
+      return res.status(200).json(userDiscount);
+    } catch (error: any) {
+      if (error.message === 'Discount not found') {
+        return res.status(404).json({ message: 'Discount not found' });
+      }
+      next(error);
+    }
+  };
   
   // saya tambahin ini ya mba
   getEventsByOrganizerId = async (req: Request, res: Response, next: NextFunction) => {

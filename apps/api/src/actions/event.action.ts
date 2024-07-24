@@ -155,18 +155,24 @@ class EventAction {
     return { events, total_count };
   };
 
+  getUserDiscount = async (user_id: number) => {
+    const userDiscount = await prisma.userDiscount.findFirst({
+      where: {
+        user_id: Number(user_id),
+        is_redeemed: false,
+      },
+    });
+    return userDiscount;
+
+  };
+
   createTransaction = async (user_id: number, event_id: number, number_of_ticket: number) => {
     try {
       const user = await prisma.user.findUnique({
         where: { user_id },
       });
 
-      const userDiscount = await prisma.userDiscount.findFirst({
-        where: {
-          user_id: user_id,
-          is_redeemed: false,
-        },
-      });
+      const userDiscount = await this.getUserDiscount(user_id)
 
       const event = await prisma.event.findUnique({
         where: {
