@@ -19,7 +19,7 @@ function HeroSection() {
         justifyContent: 'space-between',
         padding: '40px',
         background:
-          'linear-gradient(135deg, rgba(30, 60, 114, 0.8), rgba(42, 82, 152, 0.8))',
+          'linear-gradient(120deg, rgba(10,97,105,0.9) 0%, rgba(90,78,130,0.9) 29%, rgba(90,82,168,0.9) 65%, rgba(118,91,133,0.9) 100%)',
         color: '#fff',
         minHeight: '82vh', // To set height of the section
         position: 'relative',
@@ -31,11 +31,10 @@ function HeroSection() {
           position: 'absolute',
           top: 0,
           left: 0,
-          width: '200%',
-          height: '200%',
-          background: 'inherit',
+          width: '100%',
+          height: '100%',
+          background: 'rgba(0, 0, 0, 0.3)', // Soft overlay effect
           zIndex: -1,
-          animation: 'animateBackground 20s linear infinite',
         }}
       />
       <Box
