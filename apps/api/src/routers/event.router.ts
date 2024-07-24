@@ -18,6 +18,7 @@ export class EventRouter {
     this.router.patch('/payment/:transaction_id', this.eventController.confirmPayment);
     this.router.get('/events-for-review/:userId', this.eventController.getEventsForReview);
     this.router.post('/review', this.eventController.postReview);
+    this.router.get('/user-discount/:user_id',  this.eventController.getUserDiscount);
     // saya tambahin route ini ya mba
     this.router.get(
       '/events-dashboard/:organizer_id',

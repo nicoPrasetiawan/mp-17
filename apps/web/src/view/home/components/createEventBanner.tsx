@@ -53,7 +53,7 @@ const CreateEventBanner: React.FC = () => {
         >
           Create event
         </Button>
-      </Link>
+        </Link>
     </Box>
   );
 };
