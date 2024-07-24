@@ -1,29 +1,14 @@
 'use client';
 
 import React, { useState } from 'react';
-import axios from 'axios';
-import {
-  Container,
-  Box,
-  Typography,
-  TextField,
-  Button,
-  Paper,
-  Grid,
-  Avatar,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-} from '@mui/material';
 import { useAppSelector, useAppDispatch } from '@/lib/hooks';
-import EditIcon from '@mui/icons-material/Edit';
-import SaveIcon from '@mui/icons-material/Save';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import ErrorIcon from '@mui/icons-material/Error';
-import WarningIcon from '@mui/icons-material/Warning';
+import axios from 'axios';
 import { updateUserProfile } from '@/lib/features/auth/authSlices';
+import { Container, Box, Avatar, Typography, Paper } from '@mui/material';
+import ProfileForm from './profileForm';
+import ConfirmationDialog from './confirmationDialog';
+import SuccessDialog from './successDialog';
+import ErrorDialog from './errorDialog';
 
 const UserProfile = () => {
   const { user } = useAppSelector((state) => state.auth);
@@ -90,16 +75,10 @@ const UserProfile = () => {
     }
   };
 
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('id-ID', {
-      style: 'currency',
-      currency: 'IDR',
-    }).format(value);
-  };
-
   return (
     <Container
-      maxWidth="md"
+      maxWidth={false}
+      disableGutters
       sx={{
         mt: 0,
         minHeight: 'calc(100vh - 84px)',
@@ -107,9 +86,22 @@ const UserProfile = () => {
         flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'center',
+        background:
+          'linear-gradient(90deg, rgba(10,97,105,1) 0%, rgba(90,78,130,1) 29%, rgba(90,82,168,1) 65%, rgba(118,91,133,1) 100%)',
       }}
     >
-      <Paper elevation={3} sx={{ p: 4, borderRadius: 2, width: '100%' }}>
+      <Paper
+        elevation={3}
+        sx={{
+          p: 4,
+          borderRadius: 2,
+          width: '100%',
+          maxWidth: '800px',
+          backgroundColor: 'rgba(255, 255, 255, 0.8)',
+          boxShadow: 3,
+          textAlign: 'center',
+        }}
+      >
         <Box
           sx={{
             display: 'flex',
@@ -125,225 +117,31 @@ const UserProfile = () => {
             {user.username}
           </Typography>
         </Box>
-        <Grid container spacing={3} justifyContent="center">
-          <Grid item xs={12} sm={6}>
-            <Typography variant="h6" align="center" sx={{ fontWeight: 'bold' }}>
-              First Name
-            </Typography>
-            {isEditing ? (
-              <TextField
-                fullWidth
-                variant="outlined"
-                value={editedFirstName}
-                onChange={(e) => setEditedFirstName(e.target.value)}
-                sx={{ mt: 1 }}
-              />
-            ) : (
-              <Typography variant="body1" align="center" sx={{ mt: 1 }}>
-                {user.firstName}
-              </Typography>
-            )}
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <Typography variant="h6" align="center" sx={{ fontWeight: 'bold' }}>
-              Last Name
-            </Typography>
-            {isEditing ? (
-              <TextField
-                fullWidth
-                variant="outlined"
-                value={editedLastName}
-                onChange={(e) => setEditedLastName(e.target.value)}
-                sx={{ mt: 1 }}
-              />
-            ) : (
-              <Typography variant="body1" align="center" sx={{ mt: 1 }}>
-                {user.lastName}
-              </Typography>
-            )}
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <Typography variant="h6" align="center" sx={{ fontWeight: 'bold' }}>
-              Email
-            </Typography>
-            {isEditing ? (
-              <TextField
-                fullWidth
-                variant="outlined"
-                value={editedEmail}
-                onChange={(e) => setEditedEmail(e.target.value)}
-                sx={{ mt: 1 }}
-              />
-            ) : (
-              <Typography variant="body1" align="center" sx={{ mt: 1 }}>
-                {user.email}
-              </Typography>
-            )}
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <Typography variant="h6" align="center" sx={{ fontWeight: 'bold' }}>
-              Role
-            </Typography>
-            <Typography variant="body1" align="center" sx={{ mt: 1 }}>
-              {user.roleName === 'user' ? 'User' : 'Event Organizer'}
-            </Typography>
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <Typography variant="h6" align="center" sx={{ fontWeight: 'bold' }}>
-              Referral Code
-            </Typography>
-            <Typography variant="body1" align="center" sx={{ mt: 1 }}>
-              {user.referralCode || 'N/A'}
-            </Typography>
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <Typography variant="h6" align="center" sx={{ fontWeight: 'bold' }}>
-              Point Balance
-            </Typography>
-            <Typography variant="body1" align="center" sx={{ mt: 1 }}>
-              {formatCurrency(user.pointBalance)}
-            </Typography>
-          </Grid>
-          <Grid
-            item
-            xs={12}
-            sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}
-          >
-            {isEditing ? (
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={() => setOpenDialog(true)}
-                startIcon={<SaveIcon />}
-                sx={{ px: 4 }}
-                disabled={loading}
-              >
-                Save
-              </Button>
-            ) : (
-              <Button
-                variant="outlined"
-                color="primary"
-                onClick={handleEditToggle}
-                startIcon={<EditIcon />}
-                sx={{ px: 4 }}
-              >
-                Edit
-              </Button>
-            )}
-          </Grid>
-        </Grid>
+        <ProfileForm
+          user={user}
+          isEditing={isEditing}
+          editedFirstName={editedFirstName}
+          editedLastName={editedLastName}
+          editedEmail={editedEmail}
+          setEditedFirstName={setEditedFirstName}
+          setEditedLastName={setEditedLastName}
+          setEditedEmail={setEditedEmail}
+          handleEditToggle={handleEditToggle}
+          handleSave={() => setOpenDialog(true)}
+          loading={loading}
+        />
       </Paper>
-
-      <Dialog open={openDialog} onClose={() => handleDialogClose(false)}>
-        <DialogTitle>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <WarningIcon sx={{ color: 'orange' }} />
-            Confirm Changes
-          </Box>
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            Are you sure you want to save the changes?
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => handleDialogClose(false)} color="primary">
-            Cancel
-          </Button>
-          <Button onClick={() => handleDialogClose(true)} color="primary">
-            Confirm
-          </Button>
-        </DialogActions>
-      </Dialog>
-
-      <Dialog
+      <ConfirmationDialog open={openDialog} onClose={handleDialogClose} />
+      <SuccessDialog
         open={openSuccessDialog}
-        onClose={() => handleDialogClose(false)}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-        sx={{
-          '.MuiPaper-root': {
-            backgroundColor: '#e8f5e9',
-            color: '#2e7d32',
-            borderRadius: '10px',
-            maxWidth: '500px',
-            minWidth: '300px',
-          },
-        }}
-      >
-        <DialogTitle id="alert-dialog-title">
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <CheckCircleIcon sx={{ color: '#2e7d32' }} />
-            {'Profile Update Success'}
-          </Box>
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            Your profile has been updated successfully.
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button
-            onClick={() => setOpenSuccessDialog(false)}
-            color="primary"
-            variant="contained"
-            autoFocus
-            sx={{
-              backgroundColor: 'primary.main',
-              '&:hover': {
-                backgroundColor: 'primary.dark',
-              },
-            }}
-          >
-            Close
-          </Button>
-        </DialogActions>
-      </Dialog>
-
-      <Dialog
+        onClose={() => setOpenSuccessDialog(false)}
+        successMessage="Your profile has been updated successfully."
+      />
+      <ErrorDialog
         open={openErrorDialog}
-        onClose={() => handleDialogClose(false)}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-        sx={{
-          '.MuiPaper-root': {
-            backgroundColor: '#ffebee',
-            color: '#d32f2f',
-            borderRadius: '10px',
-            maxWidth: '500px',
-            minWidth: '300px',
-          },
-        }}
-      >
-        <DialogTitle id="alert-dialog-title">
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <ErrorIcon sx={{ color: '#d32f2f' }} />
-            {'Update Error'}
-          </Box>
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            Failed to update profile. Please try again later.
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button
-            onClick={() => setOpenErrorDialog(false)}
-            color="primary"
-            variant="contained"
-            autoFocus
-            sx={{
-              backgroundColor: 'primary.main',
-              '&:hover': {
-                backgroundColor: 'primary.dark',
-              },
-            }}
-          >
-            Close
-          </Button>
-        </DialogActions>
-      </Dialog>
+        onClose={() => setOpenErrorDialog(false)}
+        errorMessage="Failed to update profile. Please try again later."
+      />
     </Container>
   );
 };

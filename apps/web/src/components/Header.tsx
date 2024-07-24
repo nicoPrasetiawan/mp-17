@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   AppBar,
   Toolbar,
@@ -25,7 +25,6 @@ import PersonIcon from '@mui/icons-material/Person';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import EventIcon from '@mui/icons-material/Event';
 import LogoutIcon from '@mui/icons-material/Logout';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import WavingHandIcon from '@mui/icons-material/WavingHand';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
@@ -40,6 +39,7 @@ function Header() {
   const dispatch = useAppDispatch();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [logoutOpen, setLogoutOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -56,7 +56,7 @@ function Header() {
       setLogoutOpen(false);
       router.push('/');
       router.refresh(); // Re-render the page
-    }, 2000); // Close the dialog and redirect after 2 seconds
+    }, 3000); // Close the dialog and redirect after 3 seconds
     handleClose();
   };
 
@@ -150,140 +150,164 @@ function Header() {
     </MenuItem>,
   );
 
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 50) {
+        setScrolled(true);
+      } else {
+        setScrolled(false);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+
   return (
-    <AppBar
-      position="static"
-      sx={{
-        background:
-          'linear-gradient(90deg, rgba(10,97,105,1) 0%, rgba(90,78,130,1) 29%, rgba(90,82,168,1) 65%, rgba(118,91,133,1) 100%)',
-      }}
-      elevation={6}
-    >
-      <Toolbar sx={{ justifyContent: 'space-between', padding: '0 2rem' }}>
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            <Link href="/" passHref>
-              <img
-                src="/appLogo.svg"
-                alt="Logo"
-                style={{
-                  height: '30px',
-                  marginRight: '10px',
-                  filter: 'invert(1)',
-                }}
-              />
-            </Link>
-            EVENTICA
-          </Typography>
-        </Box>
-        <Box sx={{ display: 'flex', gap: 2 }}>
-          {loginStatus.isLogin ? (
-            <>
-              <IconButton
-                aria-controls="simple-menu"
-                aria-haspopup="true"
-                onClick={handleClick}
-                sx={{
-                  textTransform: 'none',
-                  borderRadius: '20px',
-                  padding: '6px 16px',
-                  backgroundColor: 'transparent',
-                  '&:hover': {
-                    backgroundColor: 'rgba(0, 0, 0, 0.04)',
-                  },
-                  display: 'flex',
-                  alignItems: 'center',
-                }}
-              >
-                <Avatar
+    <>
+      <AppBar
+        position="fixed"
+        sx={{
+          background:
+            'linear-gradient(90deg, rgba(10,97,105,1) 0%, rgba(90,78,130,1) 29%, rgba(90,82,168,1) 65%, rgba(118,91,133,1) 100%)',
+          transition: 'box-shadow 0.3s',
+          top: 0,
+          boxShadow: scrolled ? '0px 4px 20px rgba(0, 0, 0, 0.2)' : 'none',
+          width: '100%',
+        }}
+      >
+        <Toolbar sx={{ justifyContent: 'space-between', padding: '0 2rem' }}>
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+              <Link href="/" passHref>
+                <img
+                  src="/appLogo.svg"
+                  alt="Logo"
+                  style={{
+                    height: '30px',
+                    marginRight: '10px',
+                    filter: 'invert(1)',
+                  }}
+                />
+              </Link>
+              EVENTICA
+            </Typography>
+          </Box>
+          <Box sx={{ display: 'flex', gap: 2 }}>
+            {loginStatus.isLogin ? (
+              <>
+                <IconButton
+                  aria-controls="simple-menu"
+                  aria-haspopup="true"
+                  onClick={handleClick}
                   sx={{
-                    bgcolor: '#228d96',
-                    color: '#fff',
+                    textTransform: 'none',
+                    borderRadius: '20px',
+                    padding: '6px 16px',
+                    backgroundColor: 'transparent',
+                    '&:hover': {
+                      backgroundColor: 'rgba(0, 0, 0, 0.04)',
+                    },
+                    display: 'flex',
+                    alignItems: 'center',
                   }}
                 >
-                  {user.username.charAt(0).toUpperCase()}
-                </Avatar>
-              </IconButton>
-              <Menu
-                id="simple-menu"
-                anchorEl={anchorEl}
-                keepMounted
-                open={open}
-                onClose={handleClose}
-                anchorOrigin={{
-                  vertical: 'bottom',
-                  horizontal: 'center',
-                }}
-                transformOrigin={{
-                  vertical: 'top',
-                  horizontal: 'center',
-                }}
-                sx={{
-                  '.MuiPaper-root': {
-                    borderRadius: '10px',
-                    boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)',
-                    animation: 'fadeIn 0.3s ease-in-out',
-                  },
-                }}
-              >
-                {menuItems}
-              </Menu>
-            </>
-          ) : (
-            <>
-              <Button
-                href="/login"
-                variant={path.startsWith('/login') ? 'contained' : 'outlined'}
-                sx={{
-                  color: path.startsWith('/login') ? '#fff' : '#fff',
-                  backgroundColor: path.startsWith('/login')
-                    ? '#228d96'
-                    : 'transparent',
-                  borderColor: '#fff',
-                  '&:hover': {
+                  <Avatar
+                    sx={{
+                      bgcolor: '#228d96',
+                      color: '#fff',
+                    }}
+                  >
+                    {user.username.charAt(0).toUpperCase()}
+                  </Avatar>
+                </IconButton>
+                <Menu
+                  id="simple-menu"
+                  anchorEl={anchorEl}
+                  keepMounted
+                  open={open}
+                  onClose={handleClose}
+                  anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'center',
+                  }}
+                  transformOrigin={{
+                    vertical: 'top',
+                    horizontal: 'center',
+                  }}
+                  sx={{
+                    '.MuiPaper-root': {
+                      borderRadius: '10px',
+                      boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)',
+                      animation: 'fadeIn 0.3s ease-in-out',
+                    },
+                  }}
+                >
+                  {menuItems}
+                </Menu>
+              </>
+            ) : (
+              <>
+                <Button
+                  href="/login"
+                  variant={path.startsWith('/login') ? 'contained' : 'outlined'}
+                  sx={{
+                    color: path.startsWith('/login') ? '#fff' : '#fff',
                     backgroundColor: path.startsWith('/login')
                       ? '#228d96'
-                      : '#0a6169',
-                  },
-                }}
-              >
-                Login
-              </Button>
-              <Button
-                href="/register"
-                variant={
-                  path.startsWith('/register') ? 'contained' : 'outlined'
-                }
-                sx={{
-                  color: path.startsWith('/register') ? '#fff' : '#fff',
-                  backgroundColor: path.startsWith('/register')
-                    ? '#228d96'
-                    : 'transparent',
-                  borderColor: '#fff',
-                  '&:hover': {
+                      : 'transparent',
+                    borderColor: '#fff',
+                    '&:hover': {
+                      backgroundColor: path.startsWith('/login')
+                        ? '#228d96'
+                        : '#0a6169',
+                    },
+                  }}
+                >
+                  Login
+                </Button>
+                <Button
+                  href="/register"
+                  variant={
+                    path.startsWith('/register') ? 'contained' : 'outlined'
+                  }
+                  sx={{
+                    color: path.startsWith('/register') ? '#fff' : '#fff',
                     backgroundColor: path.startsWith('/register')
                       ? '#228d96'
-                      : '#0a6169',
-                  },
-                }}
-              >
-                Register
-              </Button>
-            </>
-          )}
-        </Box>
-      </Toolbar>
+                      : 'transparent',
+                    borderColor: '#fff',
+                    '&:hover': {
+                      backgroundColor: path.startsWith('/register')
+                        ? '#228d96'
+                        : '#0a6169',
+                    },
+                  }}
+                >
+                  Register
+                </Button>
+              </>
+            )}
+          </Box>
+        </Toolbar>
+      </AppBar>
+      <Box sx={{ marginTop: '64px' }} /> {/* Adjust the margin to match the header height */}
       <Dialog
         open={logoutOpen}
+        onClose={() => setLogoutOpen(false)}
         aria-labelledby="logout-dialog-title"
         aria-describedby="logout-dialog-description"
         sx={{
           '.MuiPaper-root': {
-            backgroundColor: '#e0f7fa',
-            color: '#00796b',
+            background: 'linear-gradient(90deg, rgba(10,97,105,1) 0%, rgba(90,78,130,1) 29%, rgba(90,82,168,1) 65%, rgba(118,91,133,1) 100%)',
+            color: '#fff',
             borderRadius: '10px',
-            maxWidth: '500px',
-            minWidth: '300px',
+            maxWidth: '600px',
+            minWidth: '400px',
+            textAlign: 'center',
           },
         }}
       >
@@ -295,6 +319,7 @@ function Header() {
             gap: 1,
             fontWeight: 'bold',
             justifyContent: 'center',
+            color: '#fff',
           }}
         >
           <WavingHandIcon sx={{ color: '#4caf50', fontSize: 40 }} />
@@ -309,10 +334,13 @@ function Header() {
               gap: 2,
             }}
           >
+            <Avatar sx={{ bgcolor: '#4caf50', width: 60, height: 60 }}>
+              <WavingHandIcon sx={{ fontSize: 40 }} />
+            </Avatar>
             <DialogContentText
               id="logout-dialog-description"
               sx={{
-                color: '#00796b',
+                color: '#fff',
                 textAlign: 'center',
                 fontSize: '1.2rem',
                 fontWeight: 'bold',
@@ -323,7 +351,7 @@ function Header() {
           </Box>
         </DialogContent>
       </Dialog>
-    </AppBar>
+    </>
   );
 }
 
