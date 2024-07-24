@@ -2,7 +2,6 @@ import {
   Drawer,
   Divider,
   List,
-  ListItem,
   ListItemIcon,
   ListItemText,
   IconButton,
@@ -25,8 +24,19 @@ const DrawerHeader = styled('div')(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
   padding: theme.spacing(0, 1),
-  minHeight: 27,
+  minHeight: 56,
   justifyContent: 'space-between',
+  backgroundColor: '#1e1e2d',
+  color: '#fff',
+}));
+
+const CustomListItemButton = styled(ListItemButton)(({ theme }) => ({
+  '&:hover': {
+    backgroundColor: theme.palette.action.hover,
+  },
+  '&.Mui-selected': {
+    backgroundColor: theme.palette.action.selected,
+  },
 }));
 
 interface DrawerComponentProps {
@@ -62,6 +72,8 @@ const DrawerComponent = ({
           '& .MuiDrawer-paper': {
             boxSizing: 'border-box',
             width: drawerWidth,
+            backgroundColor: '#1e1e2d',
+            color: '#fff',
           },
         }}
       >
@@ -75,6 +87,8 @@ const DrawerComponent = ({
           '& .MuiDrawer-paper': {
             boxSizing: 'border-box',
             width: drawerWidth,
+            backgroundColor: '#1e1e2d',
+            color: '#fff',
           },
         }}
       >
@@ -89,66 +103,64 @@ const drawerContent = (
   theme: any,
   setSelectedMenu: (menu: string) => void,
 ) => (
-  <div>
+  <Box>
     <DrawerHeader>
       <Box sx={{ display: 'flex', alignItems: 'center' }}>
-        <Typography sx={{ flexGrow: 1 }}>
-          <Link href="/" passHref>
-            <img
-              src="/appLogo.svg"
-              alt="Logo"
-              style={{
-                height: '27px',
-                marginRight: '8px',
-                marginLeft: '7px',
-              }}
-            />
-          </Link>
-          <strong>EVENTICA</strong>
+        <Link href="/" passHref>
+          <img
+            src="/appLogo.svg"
+            alt="Logo"
+            style={{
+              height: '32px',
+              marginRight: '8px',
+              marginLeft: '7px',
+              filter: 'invert(1)',
+            }}
+          />
+        </Link>
+        <Typography variant="h6" component="div">
+          EVENTICA
         </Typography>
       </Box>
-      <IconButton onClick={handleDrawerClose}>
+      <IconButton onClick={handleDrawerClose} sx={{ color: 'inherit' }}>
         {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
       </IconButton>
     </DrawerHeader>
-    <Divider />
+    <Divider sx={{ borderColor: 'rgba(255, 255, 255, 0.12)' }} />
     <List sx={{ mt: 2.5 }}>
-      <ListItem disablePadding>
-        <ListItemButton onClick={() => setSelectedMenu('Statistics')}>
-          <ListItemIcon>
-            <BarChart />
-          </ListItemIcon>
-          <ListItemText primary="Statistics" />
-        </ListItemButton>
-      </ListItem>
-      <ListItem disablePadding>
-        <ListItemButton onClick={() => setSelectedMenu('Events')}>
-          <ListItemIcon>
-            <Event />
-          </ListItemIcon>
-          <ListItemText primary="Events" />
-        </ListItemButton>
-      </ListItem>
-      <ListItem disablePadding>
-        <ListItemButton
-          onClick={() => setSelectedMenu('Attendee Registrations')}
-        >
-          <ListItemIcon>
-            <People />
-          </ListItemIcon>
-          <ListItemText primary="Attendee Registrations" />
-        </ListItemButton>
-      </ListItem>
-      <ListItem disablePadding>
-        <ListItemButton onClick={() => setSelectedMenu('Transactions')}>
-          <ListItemIcon>
-            <AttachMoney />
-          </ListItemIcon>
-          <ListItemText primary="Transactions" />
-        </ListItemButton>
-      </ListItem>
+      <CustomListItemButton onClick={() => setSelectedMenu('Statistics')}>
+        <ListItemIcon sx={{ color: 'inherit' }}>
+          <BarChart />
+        </ListItemIcon>
+        <ListItemText primary="Statistics" />
+      </CustomListItemButton>
+      <CustomListItemButton onClick={() => setSelectedMenu('Events')}>
+        <ListItemIcon sx={{ color: 'inherit' }}>
+          <Event />
+        </ListItemIcon>
+        <ListItemText primary="Events" />
+      </CustomListItemButton>
+      <CustomListItemButton onClick={() => setSelectedMenu('Transactions')}>
+        <ListItemIcon sx={{ color: 'inherit' }}>
+          <AttachMoney />
+        </ListItemIcon>
+        <ListItemText primary="Transactions" />
+      </CustomListItemButton>
     </List>
-  </div>
+    <Box
+      sx={{
+        position: 'absolute',
+        bottom: 16,
+        left: 16,
+        right: 16,
+        textAlign: 'center',
+      }}
+    >
+      <Typography variant="body2" sx={{ color: '#fff' }}>
+        © mp-17 2024
+      </Typography>
+    </Box>
+  </Box>
 );
 
 export default DrawerComponent;

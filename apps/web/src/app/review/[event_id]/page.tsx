@@ -34,7 +34,7 @@ const ReviewSubmissionPage = () => {
           comment: values.comment
         });
         if (response.status === 200) {
-          router.push('/user');
+          router.push('/');
         } else {
           console.error('Error posting review:', response);
         }

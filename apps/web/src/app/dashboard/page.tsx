@@ -25,7 +25,6 @@ import {
 import { styled, useTheme } from '@mui/material/styles';
 import DrawerComponent from './drawer';
 import EventList from './evenList';
-import AttendeeRegistrations from './attendeeRegistrations';
 import Transactions from './transactions';
 import Statistics from './statistics';
 import { useAppSelector, useAppDispatch } from '@/lib/hooks';
@@ -67,6 +66,8 @@ const AppBarStyled = styled(AppBar, {
     easing: theme.transitions.easing.sharp,
     duration: theme.transitions.duration.leavingScreen,
   }),
+  background:
+    'linear-gradient(90deg, rgba(30,30,45,1) 0%, rgba(37,37,54,1) 8%, rgba(40,40,59,1) 17%, rgba(43,43,61,1) 29%, rgba(48,48,65,1) 39%, rgba(53,53,73,1) 50%, rgba(50,50,70,1) 62%, rgba(48,48,68,1) 73%, rgba(30,30,45,1) 100%)',
   ...(open && {
     width: `calc(100% - ${drawerWidth}px)`,
     marginLeft: `${drawerWidth}px`,
@@ -122,13 +123,12 @@ function Dashboard() {
   };
 
   const openMenu = Boolean(anchorEl);
-  const homeLink = user.roleId === 2 ? '/eo' : '/user';
 
   const menuItems = [
     <MenuItem
       key="home"
       component={Link}
-      href={homeLink}
+      href="/"
       onClick={handleClose}
       sx={{
         borderRadius: '5px',
@@ -262,8 +262,6 @@ function Dashboard() {
     switch (selectedMenu) {
       case 'Events':
         return <EventList events={events} loading={loading} error={error} />;
-      case 'Attendee Registrations':
-        return <AttendeeRegistrations />;
       case 'Transactions':
         return <Transactions />;
       case 'Statistics':
@@ -300,7 +298,7 @@ function Dashboard() {
             onClick={handleClick}
             sx={{
               textTransform: 'none',
-              border: '1px solid black',
+              border: '1px solid #ffff',
               borderRadius: '20px',
               padding: '6px 16px',
               backgroundColor: 'transparent',
@@ -311,7 +309,7 @@ function Dashboard() {
               alignItems: 'center',
             }}
           >
-            <MenuIcon sx={{ color: '#000' }} />
+            <MenuIcon sx={{ color: '#ffff' }} />
           </IconButton>
           <Menu
             id="simple-menu"

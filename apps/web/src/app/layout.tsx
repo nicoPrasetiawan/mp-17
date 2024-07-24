@@ -36,9 +36,10 @@ export default function RootLayout({
                 flexDirection: 'column',
                 justifyContent: 'center',
                 alignItems: 'center',
+                width: '100%',
               }}
             >
-              {children}
+              <div style={{ width: '100%' }}>{children}</div>
             </main>
             <Footer />
           </Auth>

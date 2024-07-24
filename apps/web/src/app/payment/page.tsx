@@ -21,7 +21,7 @@ const PaymentPage = () => {
 
       const response = await axios.patch(url);
       if (response.status === 200) {
-        router.push('/user');
+        router.push('/');
       } else {
         console.error('Error confirming payment:', response);
       }

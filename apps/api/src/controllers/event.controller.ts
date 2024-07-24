@@ -59,11 +59,15 @@ export class EventController {
   confirmPayment = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { transaction_id } = req.params;
-      console.log('transaction_id',transaction_id)
-      const transaction = await eventAction.confirmPayment(Number(transaction_id));
+      console.log('transaction_id', transaction_id);
+      const { updatedTransaction, updatedEvent, updatedUser } = await eventAction.confirmPayment(Number(transaction_id));
       res.status(200).json({
         message: 'Payment confirmed successfully',
-        data: transaction,
+        data: {
+          transaction: updatedTransaction,
+          event: updatedEvent,
+          user: updatedUser,
+        },
       });
     } catch (error) {
       next(error);

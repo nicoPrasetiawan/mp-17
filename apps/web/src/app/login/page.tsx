@@ -1,33 +1,15 @@
 'use client';
 
-import { useState } from 'react';
-import { Formik, Form, Field, FormikProps, FormikHelpers } from 'formik';
-import * as Yup from 'yup';
-import { ILogin } from '../../interfaces/login.interface';
-import {
-  Box,
-  Container,
-  TextField,
-  Typography,
-  Button,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogContentText,
-  DialogActions,
-  Avatar,
-} from '@mui/material';
-import { useRouter } from 'next/navigation';
-import { useAppDispatch } from '@/lib/hooks';
+import { useState, useEffect } from 'react';
+import { Container, Box, Avatar, Typography } from '@mui/material';
+import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { login } from '@/lib/features/auth/authSlices';
 import ErrorIcon from '@mui/icons-material/Error';
-
-const loginSchema = Yup.object({
-  username: Yup.string().required('Username is required'),
-  password: Yup.string()
-    .required('Password is required')
-    .min(5, 'Password must be at least 5 characters'),
-});
+import { useRouter } from 'next/navigation';
+import LoginForm from './loginForm';
+import LoginDialog from './loginDialog';
+import WelcomeDialog from './welcomeDialog';
+import { ILogin } from '@/interfaces/login.interface';
 
 const initialValues: ILogin = {
   username: '',
@@ -37,17 +19,22 @@ const initialValues: ILogin = {
 function Login() {
   const router = useRouter();
   const [open, setOpen] = useState(false);
+  const [greetingOpen, setGreetingOpen] = useState(false);
   const dispatch = useAppDispatch();
+  const { loginStatus, user } = useAppSelector((state) => state.auth);
 
-  const handleSubmit = async (
-    values: ILogin,
-    actions: FormikHelpers<ILogin>,
-  ) => {
+  const handleSubmit = async (values: ILogin, actions: any) => {
     const { username, password } = values;
 
     try {
       await dispatch(login({ password, username }));
-      router.push('/redirect');
+      if (loginStatus.isLogin) {
+        setGreetingOpen(true);
+        setTimeout(() => {
+          setGreetingOpen(false);
+          router.push('/');
+        }, 3000); // Close the greeting dialog and redirect after 3 seconds
+      }
     } catch (error) {
       console.error(error);
       setOpen(true); // Open the dialog on error
@@ -55,162 +42,83 @@ function Login() {
     }
   };
 
+  useEffect(() => {
+    if (loginStatus.isLogin) {
+      setGreetingOpen(true);
+      setTimeout(() => {
+        setGreetingOpen(false);
+        router.push('/');
+      }, 3000); // Close the greeting dialog and redirect after 3 seconds
+    }
+  }, [loginStatus.isLogin, router]);
+
   const handleClose = () => {
     setOpen(false);
   };
 
   return (
     <Container
-      maxWidth="sm"
+      maxWidth={false}
+      disableGutters
       sx={{
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
         minHeight: '100vh',
+        padding: 0,
+        margin: 0,
+        width: '100vw',
+        background:
+          'linear-gradient(90deg, rgba(10,97,105,1) 0%, rgba(90,78,130,1) 29%, rgba(90,82,168,1) 65%, rgba(118,91,133,1) 100%)',
+        position: 'relative',
       }}
     >
+      <Box
+        sx={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(255, 255, 255, 0.3)', // Add a light overlay color
+          backdropFilter: 'blur(10px)',
+          zIndex: -1,
+        }}
+      />
       <Box
         sx={{
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          backgroundColor: '#f9f9f9',
+          backgroundColor: 'rgba(255, 255, 255, 0.8)',
           padding: 4,
-          borderRadius: 5,
+          borderRadius: 2,
           boxShadow: 3,
+          textAlign: 'center',
         }}
       >
-        <Typography component="h1" variant="h4" sx={{ mb: 2 }}>
+        <Avatar
+          sx={{
+            m: 1,
+            bgcolor: 'primary.main',
+            width: 56,
+            height: 56,
+          }}
+        >
+          <ErrorIcon />
+        </Avatar>
+        <Typography component="h1" variant="h5">
           Login
         </Typography>
-        <Formik
-          initialValues={initialValues}
-          validationSchema={loginSchema}
-          onSubmit={handleSubmit}
-        >
-          {(props: FormikProps<ILogin>) => {
-            const { values, errors, touched, handleChange, isSubmitting } =
-              props;
-
-            return (
-              <Form>
-                <Box sx={{ mt: 3 }}>
-                  <Field
-                    as={TextField}
-                    variant="outlined"
-                    margin="normal"
-                    fullWidth
-                    id="username"
-                    label="Username"
-                    type="username"
-                    name="username"
-                    onChange={handleChange}
-                    value={values.username}
-                    error={touched.username && Boolean(errors.username)}
-                    helperText={touched.username && errors.username}
-                  />
-                  <Field
-                    as={TextField}
-                    variant="outlined"
-                    margin="normal"
-                    fullWidth
-                    id="password"
-                    name="password"
-                    label="Password"
-                    type="password"
-                    onChange={handleChange}
-                    value={values.password}
-                    error={touched.password && Boolean(errors.password)}
-                    helperText={touched.password && errors.password}
-                  />
-                  <Button
-                    type="submit"
-                    fullWidth
-                    variant="contained"
-                    color="primary"
-                    disabled={isSubmitting}
-                    sx={{ mt: 3, mb: 2 }}
-                  >
-                    LOGIN
-                  </Button>
-                </Box>
-              </Form>
-            );
-          }}
-        </Formik>
+        <LoginForm initialValues={initialValues} handleSubmit={handleSubmit} />
       </Box>
-      <Dialog
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-        sx={{
-          '.MuiPaper-root': {
-            backgroundColor: '#ffebee',
-            color: '#d32f2f',
-            borderRadius: '10px',
-            maxWidth: '500px',
-            minWidth: '300px',
-          },
-        }}
-      >
-        <DialogTitle
-          id="alert-dialog-title"
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 1,
-            fontWeight: 'bold',
-            justifyContent: 'center',
-          }}
-        >
-          <ErrorIcon sx={{ color: '#d32f2f' }} />
-          {'Login Error'}
-        </DialogTitle>
-        <DialogContent>
-          <Box
-            sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              gap: 2,
-            }}
-          >
-            <Avatar sx={{ bgcolor: '#d32f2f', width: 60, height: 60 }}>
-              <ErrorIcon sx={{ fontSize: 40 }} />
-            </Avatar>
-            <DialogContentText
-              id="alert-dialog-description"
-              sx={{
-                color: '#d32f2f',
-                textAlign: 'center',
-                fontSize: '1.2rem',
-                fontWeight: 'bold',
-              }}
-            >
-              Invalid username or password. Please try again.
-            </DialogContentText>
-          </Box>
-        </DialogContent>
-        <DialogActions sx={{ justifyContent: 'center' }}>
-          <Button
-            onClick={handleClose}
-            color="primary"
-            variant="contained"
-            autoFocus
-            sx={{
-              mt: 2,
-              backgroundColor: 'primary.main',
-              '&:hover': {
-                backgroundColor: 'primary.dark',
-              },
-            }}
-          >
-            Close
-          </Button>
-        </DialogActions>
-      </Dialog>
+      <LoginDialog open={open} handleClose={handleClose} />
+      <WelcomeDialog
+        open={greetingOpen}
+        username={user?.username}
+        onClose={() => setGreetingOpen(false)}
+      />
     </Container>
   );
 }
