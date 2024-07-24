@@ -469,6 +469,25 @@ findEventsStatisticsByOrganizerId = async (organizer_id: number) => {
     eventsByPrice,
   };
 };
+
+getTransactionsByOrganizerId = async (organizer_id: number) => {
+  try {
+    const transactions = await prisma.transaction.findMany({
+      where: {
+        event: {
+          organizer_id: organizer_id
+        }
+      },
+      include: {
+        event: true
+      }
+    });
+    return transactions;
+  } catch (error) {
+    throw error;
+  }
+};
+
 }
 
 export default new EventAction();

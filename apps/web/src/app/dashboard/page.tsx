@@ -263,7 +263,7 @@ function Dashboard() {
       case 'Events':
         return <EventList events={events} loading={loading} error={error} />;
       case 'Transactions':
-        return <Transactions />;
+        return <Transactions organizer_id={organizer_id} />;
       case 'Statistics':
         return <Statistics organizer_id={organizer_id} />;
       default:

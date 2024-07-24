@@ -172,4 +172,18 @@ export class EventController {
       next(error);
     }
   };
+
+  getTransactionsByOrganizerId = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { organizer_id } = req.params;
+      const transactions = await eventAction.getTransactionsByOrganizerId(Number(organizer_id));
+      res.status(200).json({
+        message: 'Get transactions by organizer success',
+        data: transactions,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
 }
