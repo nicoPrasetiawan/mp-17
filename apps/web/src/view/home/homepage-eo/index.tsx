@@ -10,11 +10,6 @@ const HomeEOView: React.FC = () => {
       <Box
         sx={{ width: '100%', maxWidth: '1200px', mx: 'auto', padding: '16px' }}
       >
-        <Typography id="event-organizer" variant="h2" textAlign="center" mb={4}>
-          {' '}
-          {/* change the id for targeting the handleScroll in heroSection button GET STARTED */}
-          Event Organizer Page
-        </Typography>
         <Box sx={{ width: '100%' }}>
           <EventList />
         </Box>

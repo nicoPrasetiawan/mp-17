@@ -5,9 +5,12 @@ import { Box, Typography, Button } from '@mui/material';
 
 function HeroSection() {
   const handleScroll = () => {
-    const element = document.getElementById('event-organizer');
+    const element = document.getElementById('eventList');
     if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
+      const offset = -100;
+      const elementPosition =
+        element.getBoundingClientRect().top + window.pageYOffset + offset;
+      window.scrollTo({ top: elementPosition, behavior: 'smooth' });
     }
   };
 
