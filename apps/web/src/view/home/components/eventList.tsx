@@ -113,6 +113,7 @@ const EventList: React.FC = () => {
   return (
     <Box sx={{ mb:18 }}>
       <CategoryIcons selectedCategory={category} onChange={handleCategoryChange} />
+      <Box display="flex" justifyContent="space-between" marginBottom="16px" gap={5}>
       <TextField
         label="Search Events"
         variant="outlined"
@@ -127,7 +128,6 @@ const EventList: React.FC = () => {
           },
         }}
       />
-      <Box display="flex" justifyContent="space-between" marginBottom="16px">
         <FormControl variant="outlined" margin="normal" fullWidth sx={{ marginRight: 1 }}>
           <InputLabel id="location-label">Location</InputLabel>
           <Select

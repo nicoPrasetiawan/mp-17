@@ -17,7 +17,7 @@ const categories = [
 
 const CategoryIcons: React.FC<{ selectedCategory: string, onChange: (value: string) => void }> = ({ selectedCategory, onChange }) => {
   return (
-    <Box display="flex" flexDirection="column" alignItems="center" mt={3} mb={3}>
+    <Box id="eventList" display="flex" flexDirection="column" alignItems="center" mt={3} mb={3}>
       <Typography
         variant="h4"
         component="h2"
@@ -43,7 +43,7 @@ const CategoryIcons: React.FC<{ selectedCategory: string, onChange: (value: stri
       >
         Browse Events by Your Interests
       </Typography>
-      <Box display="flex" justifyContent="center" gap={6} padding={2} flexWrap="wrap">
+      <Box display="flex" justifyContent="center" gap={9.5} padding={1} flexWrap="wrap">
         {categories.map((category) => (
           <Box key={category.value} textAlign="center" sx={{ margin: '8px' }}>
             <IconButton
@@ -52,8 +52,8 @@ const CategoryIcons: React.FC<{ selectedCategory: string, onChange: (value: stri
               onClick={() => onChange(selectedCategory === category.value ? "" : category.value)}
               sx={{
                 borderRadius: '50%',
-                width: '140px',
-                height: '140px',
+                width: '87px',
+                height: '87px',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',

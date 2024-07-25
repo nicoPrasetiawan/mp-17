@@ -130,9 +130,14 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
                   onChange={(e: any) => {
                     setFieldValue('accountType', e.target.value);
                   }}
+                  sx={{ textAlign: 'left' }}
                 >
-                  <MenuItem value="1">User</MenuItem>
-                  <MenuItem value="2">Event Organizer</MenuItem>
+                  <MenuItem value="1" sx={{ textAlign: 'left' }}>
+                    User
+                  </MenuItem>
+                  <MenuItem value="2" sx={{ textAlign: 'left' }}>
+                    Event Organizer
+                  </MenuItem>
                 </Field>
                 <FormHelperText>
                   {touched.accountType && errors.accountType}
