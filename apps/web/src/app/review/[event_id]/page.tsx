@@ -33,7 +33,7 @@ const ReviewSubmissionPage = () => {
           rating: values.rating,
           comment: values.comment
         });
-        if (response.status === 200) {
+        if (response.status === 201) {
           router.push('/');
         } else {
           console.error('Error posting review:', response);

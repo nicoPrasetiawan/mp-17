@@ -30,7 +30,7 @@ const ReviewCard: React.FC<ReviewCardProps> = ({ eventName, comment, reviewerNam
         }}
       >
         <Avatar alt={reviewerName} src="/avatar.jpg" size="lg" />
-        <Rating value={rating} precision={0.5} readOnly />
+        <Rating value={rating} precision={0.25} readOnly />
         {/* {'⭐'.repeat(rating) + '☆'.repeat(5 - rating)} */}
       </Box>
       <CardContent>

@@ -27,14 +27,14 @@ const EventCard: React.FC<EventCardProps> = ({ event_name, event_description, on
         sx={{ bgcolor:'#FFFFFF',color:'#203160',height: '250px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}
       >
         <Box sx={{ display: 'flex', gap: 1 }}>
-        <LocationOnRounded/>
+        <LocationOnRounded  sx={{color:"rgba(10,97,105,1)"}} />
         <Chip size="sm" variant="outlined" >
           {event_location}
         </Chip>
       </Box>
         <Divider inset="none" />
       <CardContent>
-        <Typography sx={{ color:'#203160' }} level="h2">{event_name}</Typography>
+        <Typography sx={{ color:'rgba(10,97,105,1)' }} level="h2">{event_name}</Typography>
         <Typography level="body-md"
           sx={{ overflow: 'hidden',color:'#203160', textOverflow: 'ellipsis', display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical' }}
         >
@@ -47,7 +47,7 @@ const EventCard: React.FC<EventCardProps> = ({ event_name, event_description, on
         <Typography level="title-lg" sx={{ mr: 'auto', color:'#c57731' }}>
           {original_price === 0 ? 'FREE' : `Rp${new Intl.NumberFormat('id-ID', { minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(original_price)}`}
         </Typography>
-          <Button onClick={() => onBuyTicket(event_id)} sx={{ bgcolor:'#203160', color:'#FFFFFF' }} startDecorator={<ConfirmationNumber />}>{original_price === 0 ? 'Get Ticket' : 'Buy Ticket'}</Button>
+          <Button onClick={() => onBuyTicket(event_id)} sx={{ bgcolor:'rgb(106, 98, 167)', color:'#FFFFFF','&:hover': { bgcolor:'rgba(10,97,105,1)'}}} startDecorator={<ConfirmationNumber />}>{original_price === 0 ? 'Get Ticket' : 'Buy Ticket'}</Button>
         </CardActions>
       </Card>
     </Box>
