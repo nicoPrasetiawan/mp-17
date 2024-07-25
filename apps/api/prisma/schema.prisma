@@ -129,7 +129,7 @@ model Review {
   review_id  Int      @id @default(autoincrement())
   user_id    Int
   event_id   Int
-  rating     Int
+  rating     Float
   comment    String   @db.VarChar(2000)
   created_at DateTime @default(now())
   user  User  @relation(fields: [user_id], references: [user_id])

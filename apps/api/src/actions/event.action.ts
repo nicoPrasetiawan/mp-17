@@ -155,6 +155,16 @@ class EventAction {
     return { events, total_count };
   };
 
+  getEventsAll = async () => {
+    try {
+      const events = await prisma.event.findMany();
+
+      return events;
+    } catch (error) {
+      throw error;
+    }
+  };
+
   getUserDiscount = async (user_id: number) => {
     const userDiscount = await prisma.userDiscount.findFirst({
       where: {
@@ -338,6 +348,16 @@ class EventAction {
       });
 
       return review;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  getReviews = async () => {
+    try {
+      const reviews = await prisma.review.findMany();
+
+      return reviews;
     } catch (error) {
       throw error;
     }

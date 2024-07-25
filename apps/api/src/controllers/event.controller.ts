@@ -100,6 +100,18 @@ export class EventController {
     }
   };
 
+  async getEventsAll(req: Request, res: Response, next: NextFunction) {
+    try {
+      const review = await eventAction.getEventsAll();
+
+      res.status(200).json({
+        message: 'Get events all successfully',
+        data: review
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
 
   getEvent = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -135,8 +147,21 @@ export class EventController {
       const { user_id, event_id, rating, comment } = req.body;
       const review = await eventAction.postReview(user_id, event_id, rating, comment);
 
-      res.status(200).json({
+      res.status(201).json({
         message: 'Review posted successfully',
+        data: review
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  async getReviews(req: Request, res: Response, next: NextFunction) {
+    try {
+      const review = await eventAction.getReviews();
+
+      res.status(200).json({
+        message: 'Get reviews successfully',
         data: review
       });
     } catch (error) {

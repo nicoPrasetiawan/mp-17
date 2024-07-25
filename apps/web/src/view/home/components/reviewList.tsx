@@ -1,4 +1,6 @@
-import React from 'react';
+"use client"
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import Slider from 'react-slick';
 import { Box, Typography, IconButton } from '@mui/material';
 import { ArrowBackIos, ArrowForwardIos } from '@mui/icons-material';
@@ -54,58 +56,64 @@ const PrevArrow = (props: any) => {
   );
 };
 
+interface Review {
+  review_id: number;
+  user_id: number;
+  event_id: number;
+  rating: number;
+  comment: string;
+  created_at: string;
+}
+
+interface Event {
+  event_id: number;
+  event_name: string;
+}
+
+interface User {
+  user_id: number;
+  username: string;
+}
+
 const ReviewList: React.FC = () => {
-  const reviews = [
-    {
-      eventName: 'Ini Event 1',
-      comment: 'Event Ini sangat bagus sekali!',
-      reviewerName: 'Topik Suranto',
-      date: '2024-07-17',
-      rating: 4,
-    },
-    {
-      eventName: 'Jogja Itu Istimewa',
-      comment: 'Keren banget ini event',
-      reviewerName: 'Ndi Surandi',
-      date: '2024-07-17',
-      rating: 3.5,
-    },
-    {
-      eventName: 'Konser Malam Merdeka',
-      comment: 'Pengalaman yang luar biasa dan tidak terlupakan!',
-      reviewerName: 'Mane Surahman',
-      date: '2024-07-18',
-      rating: 5,
-    },
-    {
-      eventName: 'Festival Kuliner Nusantara',
-      comment: 'Makanan enak dan suasana sangat meriah.',
-      reviewerName: 'Abdul Si Adul',
-      date: '2024-07-19',
-      rating: 4.5,
-    },
-    {
-      eventName: 'Pameran Seni Kontemporer',
-      comment: 'Seni yang dipamerkan sangat inovatif dan menginspirasi.',
-      reviewerName: 'Dani Suabdan',
-      date: '2024-07-20',
-      rating: 4,
-    },
-    {
-      eventName: 'Pertunjukan Tari Tradisional',
-      comment: 'Sangat menampilkan budaya lokal dengan indah.',
-      reviewerName: 'Bady Sujabad',
-      date: '2024-07-21',
-      rating: 3.8,
-    },
-    {
-      eventName: 'Konferensi Teknologi Masa Depan',
-      comment: 'Informasi yang sangat berguna dan pembicara yang hebat.',
-      reviewerName: 'Rizki Surizki',
-      date: '2024-07-22',
-      rating: 4.2,
-    },
-  ];
+  const [reviews, setReviews] = useState<Review[]>([]);
+  const [events, setEvents] = useState<Event[]>([]);
+  const [users, setUsers] = useState<User[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchReviews = async () => {
+      try {
+        const [reviewsResponse, eventsResponse, usersResponse] = await Promise.all([
+          axios.get('http://localhost:8000/api/reviews'),
+          axios.get('http://localhost:8000/api/events-all'),
+          axios.get('http://localhost:8000/api/users'),
+        ]);
+
+        setReviews(reviewsResponse.data.data);
+        setEvents(eventsResponse.data.data);
+        setUsers(usersResponse.data.data);
+      } catch (err: any) {
+        setError(err.message);
+        console.error('Error fetching data:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchReviews();
+  }, []);
+
+  const findEventName = (eventId: number) => {
+    const event = events.find((event) => event.event_id === eventId);
+    return event ? event.event_name : 'Unknown Event';
+  };
+
+  const findUserName = (userId: number) => {
+    const user = users.find((user) => user.user_id === userId);
+    return user ? user.username : 'Unknown User';
+  };
 
   const settings = {
     dots: true,
@@ -150,9 +158,15 @@ const ReviewList: React.FC = () => {
         What People Say About Us
       </Typography>
       <Slider {...settings}>
-        {reviews.map((review, index) => (
-          <Box key={index} sx={{ padding: { xs: '5px', md: '10px' } }}>
-            <ReviewCard {...review} />
+        {reviews.map((review) => (
+          <Box key={review.review_id} sx={{ padding: { xs: '5px', md: '10px' } }}>
+            <ReviewCard
+              eventName={findEventName(review.event_id)}
+              comment={review.comment}
+              reviewerName={findUserName(review.user_id)}
+              date={new Date(review.created_at).toLocaleDateString()}
+              rating={review.rating}
+            />
           </Box>
         ))}
       </Slider>

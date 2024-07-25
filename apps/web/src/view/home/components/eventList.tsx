@@ -168,7 +168,7 @@ const EventList: React.FC = () => {
             lg: '600px', // On large screens, max width is 1200px
           },
           mx: '3px',
-          my:'3px'
+          my: '3px'
         }}
       >
       {initialLoading ? (

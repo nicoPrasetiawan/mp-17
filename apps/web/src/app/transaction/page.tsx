@@ -2,6 +2,8 @@
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import * as Yup from 'yup';
+
 import {
   Container,
   Typography,
@@ -138,6 +140,11 @@ const TransactionPage = () => {
     initialValues: {
       number_of_ticket: 1,
     },
+    validationSchema: Yup.object({
+      number_of_ticket: Yup.number()
+        .min(1, 'Number of tickets must be at least 1')
+        .required('Number of tickets is required'),
+    }),
     onSubmit: async (values) => {
       try {
         const transaction = await axios.post(
@@ -317,6 +324,9 @@ const TransactionPage = () => {
                   sx={{ mb: 2 }}
                   fullWidth
                   margin="normal"
+                  onBlur={formik.handleBlur}
+                  error={formik.touched.number_of_ticket && Boolean(formik.errors.number_of_ticket)}
+                  helperText={formik.touched.number_of_ticket && formik.errors.number_of_ticket}
                 />
                 <Box
                   sx={{

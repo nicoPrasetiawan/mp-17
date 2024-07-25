@@ -10,8 +10,8 @@ import TheaterComedyIcon from '@mui/icons-material/TheaterComedy';
 const categories = [
   { icon: <TheaterComedyIcon sx={{ fontSize: 60 }} />, label: 'Comedy', value: '1' },
   { icon: <LocalDiningIcon sx={{ fontSize: 60 }} />, label: 'Food', value: '2' },
-  { icon: <SchoolIcon sx={{ fontSize: 60 }} />, label: 'Education', value: '3' },
-  { icon: <MusicNoteIcon sx={{ fontSize: 60 }} />, label: 'Music', value: '4' },
+  { icon: <SchoolIcon sx={{fontSize: 60 }} />, label: 'Education', value: '3' },
+  { icon: <MusicNoteIcon sx={{fontSize: 60 }} />, label: 'Music', value: '4' },
   { icon: <MovieIcon sx={{ fontSize: 60 }} />, label: 'Film', value: '5' },  
 ];
 
@@ -58,10 +58,10 @@ const CategoryIcons: React.FC<{ selectedCategory: string, onChange: (value: stri
                 alignItems: 'center',
                 justifyContent: 'center',
                 backgroundColor: selectedCategory === category.value ? 'rgb(98, 90, 159)' : 'rgba(0, 0, 255, 0.1)',
-                color: selectedCategory === category.value ? 'white' : 'black',
+                color: selectedCategory === category.value ? 'white' : '#203160',
                 '&:hover': {
                   backgroundColor: selectedCategory === category.value ? 'rgb(106, 98, 167)' : 'transparent',
-                  border: '8px solid'
+                  border: '8px solid rgb(98, 90, 159)'
                 },
               }}
             >

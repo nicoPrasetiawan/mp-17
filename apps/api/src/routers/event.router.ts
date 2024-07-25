@@ -12,12 +12,14 @@ export class EventRouter {
   private initializeRoutes(): void {
     this.router.post('/events', this.eventController.createEvent);
     this.router.get('/events', this.eventController.getEvents);
+    this.router.get('/events-all', this.eventController.getEventsAll);
     this.router.get('/events/:event_id', this.eventController.getEvent);
 
     this.router.post('/transaction', this.eventController.createTransaction);
     this.router.patch('/payment/:transaction_id', this.eventController.confirmPayment);
     this.router.get('/events-for-review/:userId', this.eventController.getEventsForReview);
     this.router.post('/review', this.eventController.postReview);
+    this.router.get('/reviews', this.eventController.getReviews);
     this.router.get('/user-discount/:user_id',  this.eventController.getUserDiscount);
     // saya tambahin route ini ya mba
     this.router.get(
