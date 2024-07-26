@@ -21,11 +21,13 @@ import {
   DialogContent,
   DialogContentText,
   DialogActions, FormControlLabel, 
-  Checkbox
+  Checkbox,
+  Avatar
 } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import { useAppSelector } from '@/lib/hooks';
+import EditCalendarIcon from '@mui/icons-material/EditCalendar';
 
 const eventSchema = Yup.object({
   eventName: Yup.string().required('Event name is required').max(191, 'Have a concise event name (max: 191 character)'),
@@ -139,15 +141,18 @@ function CreateEvent() {
 
   return (
     <Container
-      maxWidth="lg"
+      maxWidth={false}
       sx={{
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
         minHeight: '100vh',
-        mt: 5,
-        mb: 5,
+        padding: 0,
+        margin: 0,
+        width: '100vw',
+        background:
+          'linear-gradient(90deg, rgba(10,97,105,1) 0%, rgba(90,78,130,1) 29%, rgba(90,82,168,1) 65%, rgba(118,91,133,1) 100%)',
       }}
     >
       <Box
@@ -155,13 +160,21 @@ function CreateEvent() {
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          backgroundColor: '#f9f9f9',
+          backgroundColor: 'rgba(255, 255, 255, 0.8)',
           padding: 4,
-          borderRadius: 5,
-          boxShadow: 3
+          borderRadius: 2,
+          boxShadow: 3,
+          textAlign: 'center',
+          maxWidth: '600px',
+          width: '100%',
+          mt: 5,
+          mb: 5,
         }}
       >
-        <Typography component="h1" variant="h4" sx={{ mb: 2 }}>
+        <Avatar sx={{ m: 1, bgcolor: 'primary.main', width: 56, height: 56 }}>
+          <EditCalendarIcon />
+        </Avatar>
+        <Typography component="h1" variant="h4">
           Post your event!
         </Typography>
         <Formik
@@ -264,6 +277,7 @@ function CreateEvent() {
                         setFieldValue('ticketType', e.target.value);
                       }}
                       value={values.ticketType}
+                      sx={{ textAlign: 'left' }}
                     >
                       <MenuItem value="free">Free</MenuItem>
                       <MenuItem value="paid">Paid</MenuItem>
@@ -304,6 +318,7 @@ function CreateEvent() {
                         setFieldValue('location', parseInt(e.target.value));
                       }}
                       value={values.location}
+                      sx={{ textAlign: 'left' }}
                     >
                         <MenuItem value="1">Aceh</MenuItem>
                         <MenuItem value="2">Sumatera Utara</MenuItem>
@@ -366,6 +381,7 @@ function CreateEvent() {
                         setFieldValue('category', parseInt(e.target.value));
                       }}
                       value={values.category}
+                      sx={{ textAlign: 'left' }}
                     >
                       <MenuItem value="1">Comedy</MenuItem>
                       <MenuItem value="2">Food</MenuItem>
