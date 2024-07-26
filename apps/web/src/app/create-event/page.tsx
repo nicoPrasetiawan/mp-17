@@ -219,7 +219,7 @@ function CreateEvent() {
                   />
 
                   <FormControl fullWidth margin="normal" sx={{ mt: 4 }}>
-                    <InputLabel htmlFor="startDate" sx={{ position: 'absolute', transform: 'translate(0, -1.5rem) scale(0.75)', transformOrigin: 'top left', backgroundColor: '#f9f9f9', padding: '0 0.25rem', color: '#757575' }}>
+                    <InputLabel htmlFor="startDate" sx={{ position: 'absolute', transform: 'translate(0, -1.5rem) scale(0.75)', transformOrigin: 'top left', backgroundColor: 'transparent', padding: '0 0.25rem', color: '#757575' }}>
                       Start Time
                     </InputLabel>
                     <Field
@@ -240,7 +240,7 @@ function CreateEvent() {
                   </FormControl>
 
                   <FormControl fullWidth margin="normal" sx={{ mt: 4 }}>
-                    <InputLabel htmlFor="endDate" sx={{ position: 'absolute', transform: 'translate(0, -1.5rem) scale(0.75)', transformOrigin: 'top left', backgroundColor: '#f9f9f9', padding: '0 0.25rem', color: '#757575' }}>
+                    <InputLabel htmlFor="endDate" sx={{ position: 'absolute', transform: 'translate(0, -1.5rem) scale(0.75)', transformOrigin: 'top left', backgroundColor: 'transparent', padding: '0 0.25rem', color: '#757575' }}>
                       End Time
                     </InputLabel>
                     <Field

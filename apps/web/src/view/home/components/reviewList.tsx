@@ -2,7 +2,8 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Slider from 'react-slick';
-import { Box, Typography, IconButton } from '@mui/material';
+import { Box, IconButton } from '@mui/material';
+import { Button, Modal, ModalClose, Sheet, Typography } from '@mui/joy';
 import { ArrowBackIos, ArrowForwardIos } from '@mui/icons-material';
 import ReviewCard from './reviewCard';
 import 'slick-carousel/slick/slick.css';
@@ -81,6 +82,8 @@ const ReviewList: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [open, setOpen] = useState(false);
+  const [selectedReview, setSelectedReview] = useState<Review | null>(null);
 
   useEffect(() => {
     const fetchReviews = async () => {
@@ -115,6 +118,16 @@ const ReviewList: React.FC = () => {
     return user ? user.username : 'Unknown User';
   };
 
+  const handleOpenModal = (review: Review) => {
+    setSelectedReview(review);
+    setOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setOpen(false);
+    setSelectedReview(null);
+  };
+
   const settings = {
     dots: true,
     infinite: true,
@@ -144,11 +157,11 @@ const ReviewList: React.FC = () => {
   return (
     <Box sx={{ flexGrow: 1, padding: { xs: '10px', md: '20px' } }}>
       <Typography
-        variant="h4"
-        color={'#1e0f00'}
+        level="h4"
         sx={{
           fontSize: { xs: '20px', md: '28px' },
           fontWeight: 800,
+          color: '#1e0f00',
           mb: 3,
           borderBottom: '2px solid #1e0f00',
           display: 'inline-block',
@@ -159,17 +172,60 @@ const ReviewList: React.FC = () => {
       </Typography>
       <Slider {...settings}>
         {reviews.map((review) => (
-          <Box key={review.review_id} sx={{ padding: { xs: '5px', md: '10px' } }}>
+          <Box
+            key={review.review_id}
+            sx={{ padding: { xs: '5px', md: '10px' } }}
+            onClick={() => handleOpenModal(review)}
+          >
             <ReviewCard
               eventName={findEventName(review.event_id)}
               comment={review.comment}
               reviewerName={findUserName(review.user_id)}
               date={new Date(review.created_at).toLocaleDateString()}
               rating={review.rating}
+              fullContent={false} // Display truncated content
             />
           </Box>
         ))}
       </Slider>
+
+      {selectedReview && (
+        <Modal
+          aria-labelledby="modal-title"
+          aria-describedby="modal-desc"
+          open={open}
+          onClose={handleCloseModal}
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+        >
+          <Sheet
+            variant="outlined"
+            sx={{
+              width: { xs: 320, md: 530 },
+              borderRadius: 'md',
+              p: 3,
+              boxShadow: 'lg',
+            }}
+          >
+            <ModalClose
+              variant="plain"
+              sx={{ m: 1 }}
+              onClick={handleCloseModal}
+            />
+            <ReviewCard
+              eventName={findEventName(selectedReview.event_id)}
+              comment={selectedReview.comment}
+              reviewerName={findUserName(selectedReview.user_id)}
+              date={new Date(selectedReview.created_at).toLocaleDateString()}
+              rating={selectedReview.rating}
+              fullContent={true} // Display full content
+            />
+          </Sheet>
+        </Modal>
+      )}
     </Box>
   );
 };

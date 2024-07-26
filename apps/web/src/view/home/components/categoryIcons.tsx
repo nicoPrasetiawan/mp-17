@@ -8,11 +8,11 @@ import MovieIcon from '@mui/icons-material/Movie';
 import TheaterComedyIcon from '@mui/icons-material/TheaterComedy';
 
 const categories = [
-  { icon: <TheaterComedyIcon sx={{ fontSize: 60 }} />, label: 'Comedy', value: '1' },
-  { icon: <LocalDiningIcon sx={{ fontSize: 60 }} />, label: 'Food', value: '2' },
-  { icon: <SchoolIcon sx={{fontSize: 60 }} />, label: 'Education', value: '3' },
-  { icon: <MusicNoteIcon sx={{fontSize: 60 }} />, label: 'Music', value: '4' },
-  { icon: <MovieIcon sx={{ fontSize: 60 }} />, label: 'Film', value: '5' },  
+  { icon: <TheaterComedyIcon sx={{ fontSize: 38 }} />, label: 'Comedy', value: '1' },
+  { icon: <LocalDiningIcon sx={{ fontSize: 38 }} />, label: 'Food', value: '2' },
+  { icon: <SchoolIcon sx={{fontSize: 38 }} />, label: 'Education', value: '3' },
+  { icon: <MusicNoteIcon sx={{fontSize: 38 }} />, label: 'Music', value: '4' },
+  { icon: <MovieIcon sx={{ fontSize: 38 }} />, label: 'Film', value: '5' },  
 ];
 
 const CategoryIcons: React.FC<{ selectedCategory: string, onChange: (value: string) => void }> = ({ selectedCategory, onChange }) => {
