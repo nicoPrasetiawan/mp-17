@@ -1,7 +1,8 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 
 function useAuthorizeUser() {
+  const [loading, setLoading] = useState(true);
   const router = useRouter();
   const pathname = usePathname();
 
@@ -10,25 +11,12 @@ function useAuthorizeUser() {
 
     if (!user || !user.role_id) {
       router.push('/');
-      return;
-    }
-
-    switch (user.role_id) {
-      case 1:
-        if (pathname !== '/user') {
-          router.push('/user');
-        }
-        break;
-      case 2:
-        if (pathname !== '/eo') {
-          router.push('/eo');
-        }
-        break;
-      default:
-        router.push('/');
-        break;
+    } else {
+      setLoading(false);
     }
   }, [router, pathname]);
+
+  return loading;
 }
 
 export default useAuthorizeUser;
