@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Box, Typography, CircularProgress, Alert, Grid, Divider } from '@mui/material';
+import { Box, Typography, CircularProgress, Alert, Grid, Divider, FormControl, InputLabel, Select, MenuItem, SelectChangeEvent } from '@mui/material';
 import BarChartIcon from '@mui/icons-material/BarChart';
 import { Bar, Pie } from 'react-chartjs-2';
 import {
@@ -41,27 +41,29 @@ const Statistics = ({ organizer_id }: StatisticsProps) => {
   const [statistics, setStatistics] = useState<StatisticsData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
+  const [timeRange, setTimeRange] = useState<string>('year'); // Default time range
+
+  const fetchStatistics = async (range: string) => {
+    try {
+      const response = await axios.get(
+        `http://localhost:8000/api/events-statistics/${organizer_id}?range=${range}`,
+      );
+      setStatistics(response.data.data);
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(err);
+      } else {
+        setError(new Error('Unknown error occurred'));
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchStatistics = async () => {
-      try {
-        const response = await axios.get(
-          `http://localhost:8000/api/events-statistics/${organizer_id}`,
-        );
-        setStatistics(response.data.data);
-      } catch (err) {
-        if (err instanceof Error) {
-          setError(err);
-        } else {
-          setError(new Error('Unknown error occurred'));
-        }
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchStatistics();
-  }, [organizer_id]);
+    setLoading(true);
+    fetchStatistics(timeRange);
+  }, [organizer_id, timeRange]);
 
   if (loading) {
     return (
@@ -136,6 +138,10 @@ const Statistics = ({ organizer_id }: StatisticsProps) => {
     ],
   };
 
+  const handleTimeRangeChange = (event: SelectChangeEvent) => {
+    setTimeRange(event.target.value as string);
+  };
+
   return (
     <Box sx={{ p: 2 }}>
       <Box
@@ -173,6 +179,21 @@ const Statistics = ({ organizer_id }: StatisticsProps) => {
             margin: '0 auto',
           }}
         />
+      </Box>
+      <Box display="flex" justifyContent="right" mb={0.6}>
+        <FormControl size="small" variant="outlined" sx={{ minWidth: 150 }}>
+          <InputLabel id="time-range-label">Time Range</InputLabel>
+          <Select
+            labelId="time-range-label"
+            value={timeRange}
+            onChange={handleTimeRangeChange}
+            label="Time Range"
+          >
+            <MenuItem value="year">Year</MenuItem>
+            <MenuItem value="month">Month</MenuItem>
+            <MenuItem value="day">Day</MenuItem>
+          </Select>
+        </FormControl>
       </Box>
       <Grid container spacing={4} justifyContent="center">
         <Grid item xs={12} md={6}>
