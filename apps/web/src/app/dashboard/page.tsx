@@ -22,6 +22,7 @@ import {
   Event as EventIcon,
   Logout as LogoutIcon,
 } from '@mui/icons-material';
+import { CircularProgress } from '@mui/material';
 import { styled, useTheme } from '@mui/material/styles';
 import DrawerComponent from './drawer';
 import EventList from './evenList';
@@ -33,6 +34,7 @@ import { Event } from './types';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { logout } from '@/lib/features/auth/authSlices';
+import useAuthorizeUser from '@/lib/customHook/useAuthorizeUser';
 
 const drawerWidth = 205;
 
@@ -82,7 +84,7 @@ const DrawerHeader = styled('div')(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
   padding: theme.spacing(0, 1),
-  minHeight: 27,
+  minHeight: 48,
   justifyContent: 'space-between',
 }));
 
@@ -95,6 +97,8 @@ const getEvents = async (organizer_id: string) => {
 };
 
 function Dashboard() {
+  const loadingAuth = useAuthorizeUser();
+
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
@@ -270,6 +274,25 @@ function Dashboard() {
         return null;
     }
   };
+
+  // to handle if unauthorized user try to access the page, the page will loading first
+  if (loadingAuth) {
+    return (
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          minHeight: '100vh',
+          justifyContent: 'center',
+          alignItems: 'center',
+          background:
+            'linear-gradient(90deg, rgba(10,97,105,1) 0%, rgba(90,78,130,1) 29%, rgba(90,82,168,1) 65%, rgba(118,91,133,1) 100%)',
+        }}
+      >
+        <CircularProgress sx={{ color: '#fff' }} />
+      </Box>
+    );
+  }
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>

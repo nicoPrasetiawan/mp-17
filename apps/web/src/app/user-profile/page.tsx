@@ -4,13 +4,16 @@ import React, { useState } from 'react';
 import { useAppSelector, useAppDispatch } from '@/lib/hooks';
 import axios from 'axios';
 import { updateUserProfile } from '@/lib/features/auth/authSlices';
-import { Container, Box, Avatar, Typography, Paper } from '@mui/material';
+import { Container, Box, Avatar, Typography, Paper, CircularProgress } from '@mui/material';
 import ProfileForm from './profileForm';
 import ConfirmationDialog from './confirmationDialog';
 import SuccessDialog from './successDialog';
 import ErrorDialog from './errorDialog';
+import useAuthorizeUser from '@/lib/customHook/useAuthorizeUser';
 
 const UserProfile = () => {
+  const loadingAuth = useAuthorizeUser();
+
   const { user } = useAppSelector((state) => state.auth);
   const dispatch = useAppDispatch();
   const [isEditing, setIsEditing] = useState(false);
@@ -74,6 +77,27 @@ const UserProfile = () => {
       setOpenDialog(false);
     }
   };
+
+  // to handle if unauthorized user try to access the page, the page will loading first
+  if (loadingAuth) {
+    return (
+      <Container
+        maxWidth={false}
+        disableGutters
+        sx={{
+          mt: 0,
+          minHeight: 'calc(100vh - 84px)',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          background:
+            'linear-gradient(90deg, rgba(10,97,105,1) 0%, rgba(90,78,130,1) 29%, rgba(90,82,168,1) 65%, rgba(118,91,133,1) 100%)',
+        }}
+      >
+        <CircularProgress sx={{ color: '#fff' }} />
+      </Container>
+    );
+  }
 
   return (
     <Container
