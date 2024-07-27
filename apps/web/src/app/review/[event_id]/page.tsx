@@ -36,7 +36,7 @@ const ReviewSubmissionPage = () => {
         .min(1, 'Rating must be in range 1 until 5 (0.25 precision)')
         .max(5, 'Rating must be in range 1 until 5 (0.25 precision)')
         .required('Rating is required'),
-      cooment: Yup.string()
+      comment: Yup.string()
         .required('Comment is required'),
     }),
     onSubmit: async (values) => {
@@ -150,6 +150,9 @@ const ReviewSubmissionPage = () => {
             onChange={formik.handleChange}
             fullWidth
             margin="normal"
+            onBlur={formik.handleBlur}
+            error={formik.touched.rating && Boolean(formik.errors.rating)}
+            helperText={formik.touched.rating && formik.errors.rating}
           />
           <TextField
             label="Comment"
@@ -161,6 +164,9 @@ const ReviewSubmissionPage = () => {
             margin="normal"
             multiline
             rows={3}
+            onBlur={formik.handleBlur}
+            error={formik.touched.comment && Boolean(formik.errors.comment)}
+            helperText={formik.touched.comment && formik.errors.comment}
           />
           <Button type="submit" variant="contained" sx={{ bgcolor:'rgb(106, 98, 167)', color:'#FFFFFF','&:hover': { bgcolor:'rgba(10,97,105,1)'}}}>
             Submit Review
