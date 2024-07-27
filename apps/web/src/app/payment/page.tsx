@@ -19,12 +19,18 @@ import {
   SelectChangeEvent,
   MenuItem,
 } from '@mui/material';
+import ErrorDialog from '@/components/errorDialog';
+import SuccessDialog from '@/components/successDialog';
 
 const PaymentPage = () => {
   const searchParams = useSearchParams();
   const transaction_id = searchParams.get('transaction_id');
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [openError, setOpenError] = useState(false);
+  const [openSuccess, setOpenSuccess] = useState(false);
 
   useEffect(() => {
     console.log('transaction_id:', transaction_id);
@@ -33,19 +39,44 @@ const PaymentPage = () => {
   const handleConfirmPayment = async () => {
     setLoading(true);
     try {
+      setErrorMessage(null);
+      setOpenError(false);
+      setSuccessMessage(null);
+      setOpenSuccess(false);
+
       const url = `http://localhost:8000/api/payment/${Number(transaction_id)}`;
 
       const response = await axios.patch(url);
       if (response.status === 200) {
-        router.push('/');
+        setSuccessMessage(
+          'You have been confirmed buying tickets!',
+        );
+        setOpenSuccess(true);
+        // router.push('/');
       } else {
         console.error('Error confirming payment:', response);
+        setErrorMessage(
+          'Error confirming payment.'
+        );
       }
     } catch (error) {
+      setErrorMessage(
+        'Error during payment confirmation.'
+      );
       console.error('Error during payment confirmation:', error);
+      setOpenError(true);
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleCloseError = () => {
+    setOpenError(false);
+  };
+
+  const handleCloseSuccess = () => {
+    setOpenSuccess(false);
+    router.push('/');
   };
 
   if (loading) {
@@ -96,8 +127,7 @@ const PaymentPage = () => {
               gutterBottom
               sx={{ color: '#ffffff', fontSize: '18px' }}
             >
-              By clicking &quot;Confirm Payment&quot;, you agree to pay the
-              total price amount
+              By clicking &quot;Confirm Payment&quot;, you confirm the payment to the total price amount
             </Typography>
           </Grid>
           <Grid xs={12} display="flex" justifyContent="center">
@@ -119,6 +149,18 @@ const PaymentPage = () => {
           </Grid>
         </Grid>
       </Box>
+      <ErrorDialog
+        open={openError}
+        onClose={handleCloseError}
+        errorMessage={errorMessage}
+        errorTitle={"Payment Error"}
+      />
+      <SuccessDialog
+        open={openSuccess}
+        onClose={handleCloseSuccess}
+        successMessage={successMessage}
+        buttonText={"Go to HomePage"}
+      />
     </Container>
   );
 };

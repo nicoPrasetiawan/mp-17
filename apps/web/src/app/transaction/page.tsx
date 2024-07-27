@@ -138,7 +138,7 @@ const TransactionPage = () => {
 
   const formik = useFormik({
     initialValues: {
-      number_of_ticket: 1,
+      number_of_ticket: 0,
     },
     validationSchema: Yup.object({
       number_of_ticket: Yup.number()

@@ -22,12 +22,16 @@ import {
   DialogContentText,
   DialogActions, FormControlLabel, 
   Checkbox,
-  Avatar
+  Avatar,
+  CircularProgress
 } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import { useAppSelector } from '@/lib/hooks';
 import EditCalendarIcon from '@mui/icons-material/EditCalendar';
+import ErrorDialog from '@/components/errorDialog';
+import SuccessDialog from '@/components/successDialog';
+import useAuthorizeUser from '@/lib/customHook/useAuthorizeUser';
 
 const eventSchema = Yup.object({
   eventName: Yup.string().required('Event name is required').max(191, 'Have a concise event name (max: 191 character)'),
@@ -93,11 +97,17 @@ const createEvent = async ({
 };
 
 function CreateEvent() {
+  // const loadingAuth = useAuthorizeUser();
+
   const {user} = useAppSelector((state)=> state.auth)
   const router = useRouter();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [open, setOpen] = useState(false);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [openError, setOpenError] = useState(false);
+  const [openSuccess, setOpenSuccess] = useState(false);
+  // const [open, setOpen] = useState(false);
   const [initialValues, setInitialValues] = useState<IEvent>(initialEventValues);
+  
 
   // Saya tambah userEffect supaya komponen nya di render ulang, dan bisa ngambil value user.userId
   useEffect(() => {
@@ -109,13 +119,32 @@ function CreateEvent() {
     }
   }, [user]);
 
+  useEffect(() => {
+    const checkUserRole = () => {
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      if (user.role_id !== 2) {
+        router.push('/');
+      }
+    };
+
+    checkUserRole();
+  }, [router]);
+  
   const handleSubmit = async (values: IEvent) => {
     try {
       setErrorMessage(null);
-      setOpen(false);
+      setOpenError(false);
+      setSuccessMessage(null);
+      setOpenSuccess(false);
+
+      // setOpen(false);
       console.log(values)
       await createEvent(values);
-      router.push('/success-create-event');
+      setSuccessMessage(
+        'You have successfully created an event!',
+      );
+      setOpenSuccess(true);
+      // router.push('/success-create-event');
     } catch (error: any) {
       console.error("Complete error object:", error);
       if (axios.isAxiosError(error)) {
@@ -131,13 +160,39 @@ function CreateEvent() {
         // Non-Axios error
         setErrorMessage('An unexpected error occurred. Please try again later.');
       }
-      setOpen(true);
+      // setOpen(true);
+      setOpenError(true);
+
     }
   };
 
-  const handleClose = () => {
-    setOpen(false);
+  const handleCloseError = () => {
+    setOpenError(false);
   };
+
+  const handleCloseSuccess = () => {
+    setOpenSuccess(false);
+    router.push('/');
+  };
+
+  // // to handle if unauthorized user try to access the page, the page will loading first
+  // if (loadingAuth) {
+  //   return (
+  //     <Box
+  //       sx={{
+  //         display: 'flex',
+  //         flexDirection: 'column',
+  //         minHeight: '100vh',
+  //         justifyContent: 'center',
+  //         alignItems: 'center',
+  //         background:
+  //           'linear-gradient(90deg, rgba(10,97,105,1) 0%, rgba(90,78,130,1) 29%, rgba(90,82,168,1) 65%, rgba(118,91,133,1) 100%)',
+  //       }}
+  //     >
+  //       <CircularProgress sx={{ color: '#fff' }} />
+  //     </Box>
+  //   );
+  // }
 
   return (
     <Container
@@ -174,8 +229,18 @@ function CreateEvent() {
         <Avatar sx={{ m: 1, bgcolor: 'primary.main', width: 56, height: 56 }}>
           <EditCalendarIcon />
         </Avatar>
-        <Typography component="h1" variant="h4">
-          Post your event!
+        <Typography         
+          variant="h3"
+          sx={{
+            fontSize: { xs: '38px', sm: '52px', md: '64px' },
+            fontWeight: 800,
+            background:
+              'linear-gradient(90deg, rgba(155,154,208,1) 0%, rgba(136,136,228,1) 22%, rgba(146,180,237,1) 100%)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            textShadow: '2px 2px 4px rgba(0, 0, 0, 0.3)', 
+            }}>
+              Post Your Event!
         </Typography>
         <Formik
           initialValues={initialValues} // Disesuaikan ulang, jadinya pakai value yang di useState karna ada re-assign organizerId yg sebelumnya
@@ -425,8 +490,7 @@ function CreateEvent() {
                     type="submit"
                     fullWidth
                     variant="contained"
-                    color="primary"
-                    sx={{ mt: 3, mb: 2 }}
+                    sx={{ mt: 3, mb: 2, bgcolor:'rgb(106, 98, 167)', color:'#FFFFFF','&:hover': { bgcolor:'rgba(10,97,105,1)'}}}
                   >
                     Create event
                   </Button>
@@ -436,24 +500,18 @@ function CreateEvent() {
           }}
         </Formik>
       </Box>
-      <Dialog
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle id="alert-dialog-title">{'Oopss...'}</DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            {errorMessage}
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose} color="primary" autoFocus>
-            OK
-          </Button>
-        </DialogActions>
-      </Dialog>
+      <ErrorDialog
+        open={openError}
+        onClose={handleCloseError}
+        errorMessage={errorMessage}
+        errorTitle={"Create Event Error"}
+      />
+      <SuccessDialog
+        open={openSuccess}
+        onClose={handleCloseSuccess}
+        successMessage={successMessage}
+        buttonText={"Go to HomePage"}
+      />
     </Container>
   );
 }

@@ -6,9 +6,10 @@ interface SuccessDialogProps {
   open: boolean;
   onClose: () => void;
   successMessage: string | null;
+  buttonText: string | null;
 }
 
-const SuccessDialog: React.FC<SuccessDialogProps> = ({ open, onClose, successMessage }) => {
+const SuccessDialog: React.FC<SuccessDialogProps> = ({ open, onClose, successMessage, buttonText }) => {
   return (
     <Dialog
       open={open}
@@ -80,10 +81,10 @@ const SuccessDialog: React.FC<SuccessDialogProps> = ({ open, onClose, successMes
             },
           }}
         >
-          Go to Homepage
+          {buttonText}
         </Button>
       </Box>
-    </Dialog>
+    </Dialog> 
   );
 };
 
