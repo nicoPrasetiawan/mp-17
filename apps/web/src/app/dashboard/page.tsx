@@ -97,15 +97,13 @@ const getEvents = async (organizer_id: string) => {
 };
 
 function Dashboard() {
-  const loadingAuth = useAuthorizeUser();
-
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [open, setOpen] = useState(true);
   const [selectedMenu, setSelectedMenu] = useState<string>('Statistics');
-  const { loginStatus, user } = useAppSelector((state) => state.auth);
+  const { user } = useAppSelector((state) => state.auth);
   const organizer_id = user?.userId;
   const theme = useTheme();
   const router = useRouter();
@@ -221,6 +219,8 @@ function Dashboard() {
       const user = JSON.parse(localStorage.getItem('user') || '{}');
       if (user.role_id !== 2) {
         router.push('/');
+      } else {
+        setLoading(false);
       }
     };
 
@@ -276,7 +276,7 @@ function Dashboard() {
   };
 
   // to handle if unauthorized user try to access the page, the page will loading first
-  if (loadingAuth) {
+  if (loading) {
     return (
       <Box
         sx={{
