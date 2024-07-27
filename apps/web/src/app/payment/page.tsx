@@ -127,8 +127,7 @@ const PaymentPage = () => {
               gutterBottom
               sx={{ color: '#ffffff', fontSize: '18px' }}
             >
-              By clicking &quot;Confirm Payment&quot;, you agree to pay the
-              total price amount
+              By clicking &quot;Confirm Payment&quot;, you confirm the payment to the total price amount
             </Typography>
           </Grid>
           <Grid xs={12} display="flex" justifyContent="center">

@@ -7,6 +7,7 @@ import { useFormik } from 'formik';
 import { useAppSelector } from '@/lib/hooks';
 import ErrorDialog from '../../../components/errorDialog';
 import SuccessDialog from '../../../components/successDialog';
+import * as Yup from 'yup';
 
 const ReviewSubmissionPage = () => {
   const router = useRouter();
@@ -30,6 +31,14 @@ const ReviewSubmissionPage = () => {
       rating: 0,
       comment: ''
     },
+    validationSchema: Yup.object({
+      rating: Yup.number()
+        .min(1, 'Rating must be in range 1 until 5 (0.25 precision)')
+        .max(5, 'Rating must be in range 1 until 5 (0.25 precision)')
+        .required('Rating is required'),
+      cooment: Yup.string()
+        .required('Comment is required'),
+    }),
     onSubmit: async (values) => {
       setErrorMessage(null);
       setOpenError(false);
