@@ -456,8 +456,7 @@ function CreateEvent() {
                     type="submit"
                     fullWidth
                     variant="contained"
-                    color="primary"
-                    sx={{ mt: 3, mb: 2 }}
+                    sx={{ mt: 3, mb: 2, bgcolor:'rgb(106, 98, 167)', color:'#FFFFFF','&:hover': { bgcolor:'rgba(10,97,105,1)'}}}
                   >
                     Create event
                   </Button>
@@ -471,6 +470,7 @@ function CreateEvent() {
         open={openError}
         onClose={handleCloseError}
         errorMessage={errorMessage}
+        errorTitle={"Create Event Error"}
       />
       <SuccessDialog
         open={openSuccess}

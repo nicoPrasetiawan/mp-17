@@ -15,12 +15,14 @@ interface ErrorDialogProps {
   open: boolean;
   onClose: () => void;
   errorMessage: string | null;
+  errorTitle: string | null;
 }
 
 const ErrorDialog: React.FC<ErrorDialogProps> = ({
   open,
   onClose,
   errorMessage,
+  errorTitle
 }) => {
   return (
     <Dialog
@@ -49,7 +51,7 @@ const ErrorDialog: React.FC<ErrorDialogProps> = ({
         }}
       >
         <ErrorIcon sx={{ color: '#d32f2f' }} />
-        {'Registration Error'}
+        {errorTitle}
       </DialogTitle>
       <DialogContent>
         <Box

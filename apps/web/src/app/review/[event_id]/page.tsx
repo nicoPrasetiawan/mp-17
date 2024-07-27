@@ -162,6 +162,7 @@ const ReviewSubmissionPage = () => {
         open={openError}
         onClose={handleCloseError}
         errorMessage={errorMessage}
+        errorTitle={"Review Error"}
       />
       <SuccessDialog
         open={openSuccess}

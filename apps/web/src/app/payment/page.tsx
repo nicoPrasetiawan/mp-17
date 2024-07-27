@@ -154,6 +154,7 @@ const PaymentPage = () => {
         open={openError}
         onClose={handleCloseError}
         errorMessage={errorMessage}
+        errorTitle={"Payment Error"}
       />
       <SuccessDialog
         open={openSuccess}
