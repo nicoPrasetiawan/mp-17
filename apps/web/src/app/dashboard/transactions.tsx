@@ -199,10 +199,10 @@ const Transactions = ({ organizer_id }: TransactionsProps) => {
               <strong>Total Transactions:</strong> {totalTransactions}
             </Typography>
             <Typography variant="body1" component="div">
-              <strong>Total Tickets:</strong> {totalTickets}
+              <strong>Total Tickets Sold:</strong> {totalTickets}
             </Typography>
             <Typography variant="body1" component="div">
-              <strong>Total Final Price:</strong> IDR {totalFinalPrice.toLocaleString('id-ID')}
+              <strong>Total GTV:</strong> IDR {totalFinalPrice.toLocaleString('id-ID')}
             </Typography>
           </Box>
         </Box>
