@@ -123,7 +123,19 @@ function CreateEvent() {
 
     checkUserRole();
   }, [router]);
+
+
   
+  // Saya tambah userEffect supaya komponen nya di render ulang, dan bisa ngambil value user.userId
+  useEffect(() => {
+    if (user) {
+      setInitialValues((prevValues) => ({
+        ...prevValues,
+        organizerId: user.userId, // saya re-assign value nya ke user.userId
+      }));
+    }
+  }, [user]);
+
   // to handle if unauthorized user try to access the page, the page will loading first
   if (loading) {
     return (
@@ -142,17 +154,6 @@ function CreateEvent() {
       </Box>
     );
   }
-  
-  // Saya tambah userEffect supaya komponen nya di render ulang, dan bisa ngambil value user.userId
-  useEffect(() => {
-    if (user) {
-      setInitialValues((prevValues) => ({
-        ...prevValues,
-        organizerId: user.userId, // saya re-assign value nya ke user.userId
-      }));
-    }
-  }, [user]);
-
   
   const handleSubmit = async (values: IEvent) => {
     try {
