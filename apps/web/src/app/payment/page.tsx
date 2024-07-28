@@ -33,6 +33,42 @@ const PaymentPage = () => {
   const [openSuccess, setOpenSuccess] = useState(false);
 
   useEffect(() => {
+    const checkUserRole = () => {
+      setLoading(true);
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      if (!user.role_id) {
+        router.push('/login')
+      }
+      else if (user.role_id !== 1) {
+        router.push('/');
+      } else {
+        setLoading(false);
+      }
+    };
+
+    checkUserRole();
+  }, [router]);
+
+  // to handle if unauthorized user try to access the page, the page will loading first
+  if (loading) {
+    return (
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          minHeight: '100vh',
+          justifyContent: 'center',
+          alignItems: 'center',
+          background:
+            'linear-gradient(90deg, rgba(10,97,105,1) 0%, rgba(90,78,130,1) 29%, rgba(90,82,168,1) 65%, rgba(118,91,133,1) 100%)',
+        }}
+      >
+        <CircularProgress sx={{ color: '#fff' }} />
+      </Box>
+    );
+  }
+  
+  useEffect(() => {
     console.log('transaction_id:', transaction_id);
   }, [transaction_id]);
 
@@ -79,18 +115,6 @@ const PaymentPage = () => {
     router.push('/');
   };
 
-  if (loading) {
-    return (
-      <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        height="100vh"
-      >
-        <CircularProgress />
-      </Box>
-    );
-  }
 
   return (
     <Container>
@@ -127,7 +151,7 @@ const PaymentPage = () => {
               gutterBottom
               sx={{ color: '#ffffff', fontSize: '18px' }}
             >
-              By clicking &quot;Confirm Payment&quot;, you confirm the payment to the total price amount
+              By clicking &quot;Confirm Payment&quot;, you confirm the payment of the total price amount to Eventica
             </Typography>
           </Grid>
           <Grid xs={12} display="flex" justifyContent="center">

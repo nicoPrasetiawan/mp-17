@@ -55,8 +55,47 @@ const TransactionPage = () => {
   const { user } = useAppSelector((state) => state.auth);
 
   useEffect(() => {
+    const checkUserRole = () => {
+      setLoading(true);
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      if (!user.role_id) {
+        setLoading(true);
+        router.push('/login')
+      }
+      else if (user.role_id !== 1) {
+        setLoading(true);
+        router.push('/');
+      } else {
+        setLoading(false);
+      }
+    };
+
+    checkUserRole();
+  }, [router]);
+
+  // to handle if unauthorized user try to access the page, the page will loading first
+  if (loading) {
+    return (
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          minHeight: '100vh',
+          justifyContent: 'center',
+          alignItems: 'center',
+          background:
+            'linear-gradient(90deg, rgba(10,97,105,1) 0%, rgba(90,78,130,1) 29%, rgba(90,82,168,1) 65%, rgba(118,91,133,1) 100%)',
+        }}
+      >
+        <CircularProgress sx={{ color: '#fff' }} />
+      </Box>
+    );
+  }
+
+  useEffect(() => {
     const fetchEvent = async () => {
       try {
+        setLoading(true)
         const response = await axios.get(
           `http://localhost:8000/api/events/${event_id}`,
         );
@@ -199,18 +238,6 @@ const TransactionPage = () => {
     return `${formattedDate} · ${formattedTime}`;
   };
 
-  if (loading) {
-    return (
-      <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        height="100vh"
-      >
-        <CircularProgress />
-      </Box>
-    );
-  }
 
   if (!event) {
     return <div>Event not found</div>;
@@ -317,9 +344,8 @@ const TransactionPage = () => {
                   name="number_of_ticket"
                   value={numberOfTickets}
                   onChange={(e) => {
-                    const value = Number(e.target.value);
-                    setNumberOfTickets(value);
-                    formik.setFieldValue('number_of_ticket', value);
+                    formik.handleChange(e);
+                    setNumberOfTickets(parseInt(e.target.value, 10));
                   }}
                   sx={{ mb: 2 }}
                   fullWidth
@@ -396,7 +422,7 @@ const TransactionPage = () => {
                   variant="solid"
                   color="primary"
                   size="lg"
-                  sx={{ mt: 2, bgcolor: '#203160' }}
+                  sx={{ mt: 2,bgcolor:'rgb(106, 98, 167)', color:'#FFFFFF','&:hover': { bgcolor:'rgba(10,97,105,1)'}}}
                   fullWidth
                 >
                   Buy Tickets

@@ -68,7 +68,7 @@ const EventList: React.FC = () => {
   const debouncedFetchEvents = useCallback(
     debounce((page, searchTerm, loc, cat) => {
       fetchEvents(page, searchTerm, loc, cat, true);
-    }, 500),
+    }, 50),
     [fetchEvents]
   );
 
@@ -114,21 +114,66 @@ const EventList: React.FC = () => {
     <Box sx={{ mb:18 }}>
       <CategoryIcons selectedCategory={category} onChange={handleCategoryChange} />
       <Box display="flex" justifyContent="space-between" marginBottom="16px" gap={5}>
-      <TextField
-        label="Search Events"
-        variant="outlined"
-        fullWidth
-        margin="normal"
-        value={searchText}
-        onChange={handleSearch}
-        sx={{
-          borderRadius: '25px',
-          '& .MuiOutlinedInput-root': {
+        <TextField
+          label="Search Events"
+          variant="outlined"
+          fullWidth
+          margin="normal"
+          value={searchText}
+          onChange={handleSearch}
+          sx={{
             borderRadius: '25px',
-          },
-        }}
-      />
-        <FormControl variant="outlined" margin="normal" fullWidth sx={{ marginRight: 1 }}>
+            '& .MuiOutlinedInput-root': {
+              borderRadius: '25px',
+              '&:hover .MuiOutlinedInput-notchedOutline': {
+                borderColor: 'rgba(10,97,105,1)', // Change the outline color on hover
+              },
+              '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                borderColor: 'rgba(10,97,105,1)', // Change the outline color when focused
+              },
+            },
+            '& .MuiOutlinedInput-notchedOutline': {
+              borderColor: 'initial', // Keep the initial color when not hovered
+            },
+            '& .MuiInputLabel-root': {
+              '&:hover': {
+                color: 'rgba(10,97,105,1)', // Change the label color on hover
+              },
+              '&.Mui-focused': {
+                color: 'rgba(10,97,105,1)', // Change the label color when focused
+              },
+            },
+          }}
+        />
+        <FormControl 
+          variant="outlined" 
+          margin="normal" 
+          fullWidth 
+          sx={{ 
+            marginRight: 1,
+            '& .MuiOutlinedInput-root': {
+              borderRadius: '25px',
+              '&:hover .MuiOutlinedInput-notchedOutline': {
+                borderColor: 'rgba(10,97,105,1)', // Change the outline color on hover
+              },
+              '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                borderColor: 'rgba(10,97,105,1)', // Change the outline color when focused
+              },
+            },
+            '& .MuiOutlinedInput-notchedOutline': {
+              borderColor: 'initial', // Keep the initial color when not hovered
+            },
+            '& .MuiInputLabel-root': {
+              color: 'initial', // Initial color
+              '&.Mui-focused': {
+                color: 'rgba(10,97,105,1)', // Change the label color when focused
+              },
+            },
+            '& .MuiInputLabel-root.Mui-focused': {
+              color: 'rgba(10,97,105,1)', // Ensure label color changes when focused
+            },
+          }}
+        >
           <InputLabel id="location-label">Location</InputLabel>
           <Select
             labelId="location-label"
@@ -137,9 +182,6 @@ const EventList: React.FC = () => {
             label="Location"
             sx={{
               borderRadius: '25px',
-              '& .MuiOutlinedInput-root': {
-                borderRadius: '25px',
-              },
             }}
           >
             <MenuItem value="">
@@ -173,7 +215,7 @@ const EventList: React.FC = () => {
       >
       {initialLoading ? (
         <Box width="100%" display="flex" justifyContent="center" alignItems="center" height="50vh">
-          <CircularProgress />
+          <CircularProgress sx={{ color: 'rgba(10,97,105,1)' }}/>
         </Box>
       ) : (
         <>

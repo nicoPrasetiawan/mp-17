@@ -21,6 +21,42 @@ const ReviewSubmissionPage = () => {
   const [openSuccess, setOpenSuccess] = useState(false);
 
   useEffect(() => {
+    const checkUserRole = () => {
+      setLoading(true);
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      if (!user.role_id) {
+        router.push('/login')
+      }
+      else if (user.role_id !== 1) {
+        router.push('/');
+      } else {
+        setLoading(false);
+      }
+    };
+
+    checkUserRole();
+  }, [router]);
+
+  // to handle if unauthorized user try to access the page, the page will loading first
+  if (loading) {
+    return (
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          minHeight: '100vh',
+          justifyContent: 'center',
+          alignItems: 'center',
+          background:
+            'linear-gradient(90deg, rgba(10,97,105,1) 0%, rgba(90,78,130,1) 29%, rgba(90,82,168,1) 65%, rgba(118,91,133,1) 100%)',
+        }}
+      >
+        <CircularProgress sx={{ color: '#fff' }} />
+      </Box>
+    );
+  }
+  
+  useEffect(() => {
     if (!event_id) {
       console.error('Invalid event ID');
     }
@@ -86,13 +122,6 @@ const ReviewSubmissionPage = () => {
     router.push('/');
   };
 
-  if (loading) {
-    return (
-      <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
-        <CircularProgress />
-      </Box>
-    );
-  }
 
   return (
     <Container
@@ -153,6 +182,13 @@ const ReviewSubmissionPage = () => {
             onBlur={formik.handleBlur}
             error={formik.touched.rating && Boolean(formik.errors.rating)}
             helperText={formik.touched.rating && formik.errors.rating}
+            sx={{
+              minHeight: '70px', // Adjust this value as needed
+              '& .MuiFormHelperText-root': {
+                position: 'absolute',
+                bottom: -10,
+              },
+            }}
           />
           <TextField
             label="Comment"
@@ -167,6 +203,28 @@ const ReviewSubmissionPage = () => {
             onBlur={formik.handleBlur}
             error={formik.touched.comment && Boolean(formik.errors.comment)}
             helperText={formik.touched.comment && formik.errors.comment}
+            InputProps={{
+            sx: {
+                fontSize: '16px', // Adjust the font size as needed
+                height: 'auto', // Allow height to adjust for multiline input
+                padding: '10px 14px', // Adjust the padding to vertically center the text
+              },
+            }}
+            FormHelperTextProps={{
+              sx: {
+                marginBottom: '-15px', // Adjust as needed to prevent resizing
+              },
+            }}
+            sx={{
+              mb: 5,
+              '& .MuiInputBase-root': {
+                minHeight: '70px', // Adjust the min height of the input container for multiline
+              },
+              '& .MuiFormHelperText-root': {
+                position: 'absolute',
+                bottom: -10,
+              },
+            }}
           />
           <Button type="submit" variant="contained" sx={{ bgcolor:'rgb(106, 98, 167)', color:'#FFFFFF','&:hover': { bgcolor:'rgba(10,97,105,1)'}}}>
             Submit Review

@@ -97,8 +97,7 @@ const createEvent = async ({
 };
 
 function CreateEvent() {
-  // const loadingAuth = useAuthorizeUser();
-
+  const [loading, setLoading] = useState(true);
   const {user} = useAppSelector((state)=> state.auth)
   const router = useRouter();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -108,7 +107,42 @@ function CreateEvent() {
   // const [open, setOpen] = useState(false);
   const [initialValues, setInitialValues] = useState<IEvent>(initialEventValues);
   
+  useEffect(() => {
+    const checkUserRole = () => {
+      setLoading(true);
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      if (!user.role_id) {
+        router.push('/login')
+      }
+      else if (user.role_id !== 2) {
+        router.push('/');
+      } else {
+        setLoading(false);
+      }
+    };
 
+    checkUserRole();
+  }, [router]);
+  
+  // to handle if unauthorized user try to access the page, the page will loading first
+  if (loading) {
+    return (
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          minHeight: '100vh',
+          justifyContent: 'center',
+          alignItems: 'center',
+          background:
+            'linear-gradient(90deg, rgba(10,97,105,1) 0%, rgba(90,78,130,1) 29%, rgba(90,82,168,1) 65%, rgba(118,91,133,1) 100%)',
+        }}
+      >
+        <CircularProgress sx={{ color: '#fff' }} />
+      </Box>
+    );
+  }
+  
   // Saya tambah userEffect supaya komponen nya di render ulang, dan bisa ngambil value user.userId
   useEffect(() => {
     if (user) {
@@ -119,16 +153,6 @@ function CreateEvent() {
     }
   }, [user]);
 
-  useEffect(() => {
-    const checkUserRole = () => {
-      const user = JSON.parse(localStorage.getItem('user') || '{}');
-      if (user.role_id !== 2) {
-        router.push('/');
-      }
-    };
-
-    checkUserRole();
-  }, [router]);
   
   const handleSubmit = async (values: IEvent) => {
     try {
@@ -175,24 +199,6 @@ function CreateEvent() {
     router.push('/');
   };
 
-  // // to handle if unauthorized user try to access the page, the page will loading first
-  // if (loadingAuth) {
-  //   return (
-  //     <Box
-  //       sx={{
-  //         display: 'flex',
-  //         flexDirection: 'column',
-  //         minHeight: '100vh',
-  //         justifyContent: 'center',
-  //         alignItems: 'center',
-  //         background:
-  //           'linear-gradient(90deg, rgba(10,97,105,1) 0%, rgba(90,78,130,1) 29%, rgba(90,82,168,1) 65%, rgba(118,91,133,1) 100%)',
-  //       }}
-  //     >
-  //       <CircularProgress sx={{ color: '#fff' }} />
-  //     </Box>
-  //   );
-  // }
 
   return (
     <Container
