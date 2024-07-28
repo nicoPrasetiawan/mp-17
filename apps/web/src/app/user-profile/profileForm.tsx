@@ -1,7 +1,9 @@
-import React from 'react';
-import { Grid, TextField, Typography, Button, Box } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { Grid, TextField, Typography, Button, Box, Tooltip, IconButton, CircularProgress } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
+import InfoOutlined from '@mui/icons-material/InfoOutlined';
+import axios from 'axios';
 
 interface ProfileFormProps {
   user: any;
@@ -30,6 +32,35 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
   handleSave,
   loading,
 }) => {
+  const [tooltipContent, setTooltipContent] = useState<string>('Fetching validity information...');
+  const [tooltipLoading, setTooltipLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    const fetchValidityInfo = async () => {
+      try {
+        const response = await axios.get(`http://localhost:8000/api/referral/${user.referralCode}`);
+        const { valid_until } = response.data.data;
+        const formattedDate = new Date(valid_until).toLocaleDateString('en-EN', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+        });
+        setTooltipContent(`Valid until: ${formattedDate}`);
+      } catch (error) {
+        setTooltipContent('You currently have no points');
+      } finally {
+        setTooltipLoading(false);
+      }
+    };
+
+    if (user.referralCode) {
+      fetchValidityInfo();
+    } else {
+      setTooltipContent('No referral code available');
+      setTooltipLoading(false);
+    }
+  }, [user.referralCode]);
+
   return (
     <Grid container spacing={3} justifyContent="center">
       <Grid item xs={12} sm={6}>
@@ -103,9 +134,16 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
         </Typography>
       </Grid>
       <Grid item xs={12} sm={6}>
-        <Typography variant="h6" align="center" sx={{ fontWeight: 'bold' }}>
-          Point Balance
-        </Typography>
+        <Box display="flex" justifyContent="center" alignItems="center">
+          <Typography variant="h6" align="center" sx={{ fontWeight: 'bold', display: 'flex', alignItems: 'center' }}>
+            Point Balance
+            <Tooltip title={tooltipLoading ? <CircularProgress size={24} /> : tooltipContent}>
+              <IconButton sx={{ ml: 1 }}>
+                <InfoOutlined fontSize="small" />
+              </IconButton>
+            </Tooltip>
+          </Typography>
+        </Box>
         <Typography variant="body1" align="center" sx={{ mt: 1 }}>
           {formatCurrency(user.pointBalance)}
         </Typography>

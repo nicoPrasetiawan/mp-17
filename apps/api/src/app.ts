@@ -5,6 +5,7 @@ import { UserRouter } from './routers/user.router';
 import { AuthRouter } from './routers/auth.router';
 import { ErrorMiddleware } from './middlewares/error.middleware';
 import { EventRouter } from './routers/event.router';
+import { ReferralRouter } from './routers/referral.router';
 
 export default class App {
   private app: Express;
@@ -28,7 +29,12 @@ export default class App {
   }
 
   private routes(): void {
-    const routers = [new UserRouter(), new AuthRouter(), new EventRouter()];
+    const routers = [
+      new UserRouter(),
+      new AuthRouter(),
+      new EventRouter(),
+      new ReferralRouter(),
+    ];
 
     routers.forEach((router) => {
       this.app.use('/api', router.getRouter());
