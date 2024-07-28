@@ -46,6 +46,7 @@ const TransactionPage = () => {
   const event_id = searchParams.get('event_id');
   const [event, setEvent] = useState<Event | null>(null);
   const [loading, setLoading] = useState(true);
+  const [roleLoading, setRoleLoading] = useState(true);
   const [numberOfTickets, setNumberOfTickets] = useState(1);
   const [finalPrice, setFinalPrice] = useState(0);
   const [discountAmount, setDiscountAmount] = useState(0);
@@ -56,41 +57,22 @@ const TransactionPage = () => {
 
   useEffect(() => {
     const checkUserRole = () => {
-      setLoading(true);
+      setRoleLoading(true);
       const user = JSON.parse(localStorage.getItem('user') || '{}');
       if (!user.role_id) {
-        setLoading(true);
+        setRoleLoading(true);
         router.push('/login')
       }
       else if (user.role_id !== 1) {
-        setLoading(true);
+        setRoleLoading(true);
         router.push('/');
       } else {
-        setLoading(false);
+        setRoleLoading(false);
       }
     };
 
     checkUserRole();
-  }, [router]);
-
-  // to handle if unauthorized user try to access the page, the page will loading first
-  if (loading) {
-    return (
-      <Box
-        sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          minHeight: '100vh',
-          justifyContent: 'center',
-          alignItems: 'center',
-          background:
-            'linear-gradient(90deg, rgba(10,97,105,1) 0%, rgba(90,78,130,1) 29%, rgba(90,82,168,1) 65%, rgba(118,91,133,1) 100%)',
-        }}
-      >
-        <CircularProgress sx={{ color: '#fff' }} />
-      </Box>
-    );
-  }
+  }, []);
 
   useEffect(() => {
     const fetchEvent = async () => {
@@ -203,6 +185,44 @@ const TransactionPage = () => {
       }
     },
   });
+
+  // to handle if unauthorized user try to access the page, the page will loading first
+  if (loading) {
+    return (
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          minHeight: '100vh',
+          justifyContent: 'center',
+          alignItems: 'center',
+          background:
+            'linear-gradient(90deg, rgba(10,97,105,1) 0%, rgba(90,78,130,1) 29%, rgba(90,82,168,1) 65%, rgba(118,91,133,1) 100%)',
+        }}
+      >
+        <CircularProgress sx={{ color: '#fff' }} />
+      </Box>
+    );
+  }
+
+    // to handle if unauthorized user try to access the page, the page will loading first
+    if (roleLoading) {
+      return (
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            minHeight: '100vh',
+            justifyContent: 'center',
+            alignItems: 'center',
+            background:
+              'linear-gradient(90deg, rgba(10,97,105,1) 0%, rgba(90,78,130,1) 29%, rgba(90,82,168,1) 65%, rgba(118,91,133,1) 100%)',
+          }}
+        >
+          <CircularProgress sx={{ color: '#fff' }} />
+        </Box>
+      );
+    }
 
   const getCityName = (locationId: number) => {
     const location = locations.find(
