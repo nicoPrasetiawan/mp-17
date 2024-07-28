@@ -49,25 +49,6 @@ const PaymentPage = () => {
     checkUserRole();
   }, [router]);
 
-  // to handle if unauthorized user try to access the page, the page will loading first
-  if (loading) {
-    return (
-      <Box
-        sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          minHeight: '100vh',
-          justifyContent: 'center',
-          alignItems: 'center',
-          background:
-            'linear-gradient(90deg, rgba(10,97,105,1) 0%, rgba(90,78,130,1) 29%, rgba(90,82,168,1) 65%, rgba(118,91,133,1) 100%)',
-        }}
-      >
-        <CircularProgress sx={{ color: '#fff' }} />
-      </Box>
-    );
-  }
-  
   useEffect(() => {
     console.log('transaction_id:', transaction_id);
   }, [transaction_id]);
@@ -115,7 +96,25 @@ const PaymentPage = () => {
     router.push('/');
   };
 
-
+  // to handle if unauthorized user try to access the page, the page will loading first
+  if (loading) {
+    return (
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          minHeight: '100vh',
+          justifyContent: 'center',
+          alignItems: 'center',
+          background:
+            'linear-gradient(90deg, rgba(10,97,105,1) 0%, rgba(90,78,130,1) 29%, rgba(90,82,168,1) 65%, rgba(118,91,133,1) 100%)',
+        }}
+      >
+        <CircularProgress sx={{ color: '#fff' }} />
+      </Box>
+    );
+  }
+  
   return (
     <Container>
       <Box
