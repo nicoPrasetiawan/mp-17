@@ -67,22 +67,29 @@ const EventList: React.FC = () => {
   // Create a debounced version of fetchEvents
   const debouncedFetchEvents = useCallback(
     debounce((page, searchTerm, loc, cat) => {
-      fetchEvents(page, searchTerm, loc, cat, true);
-    }, 50),
+      fetchEvents(page, searchTerm, loc, cat, false);
+    }, 500),
     [fetchEvents]
   );
 
+  // Initial fetch
+  useEffect(() => {
+    fetchEvents(currentPage, searchText, location, category, true);
+  }, []);
+
+  // Debounced fetch for search, location, and category changes
   useEffect(() => {
     debouncedFetchEvents(currentPage, searchText, location, category);
     // Clean up the debounce effect on unmount
     return debouncedFetchEvents.cancel;
   }, [searchText, location, category, debouncedFetchEvents]);
 
+  // Fetch events when page changes
   useEffect(() => {
     if (!initialLoading) {
       fetchEvents(currentPage, searchText, location, category, false); // Fetch events with page loading
     }
-  }, [currentPage, fetchEvents, searchText, location, category, initialLoading]);
+  }, [currentPage]);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
