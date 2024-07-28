@@ -42,12 +42,13 @@ const ReviewPage = () => {
   const { user } = useAppSelector((state) => state.auth);
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
+  const [roleLoading, setRoleLoading] = useState(true);
   const theme = useTheme();
   const isMdOrSmaller = useMediaQuery(theme.breakpoints.down('md'));
 
   useEffect(() => {
     const checkUserRole = () => {
-      setLoading(true);
+      setRoleLoading(true);
       const user = JSON.parse(localStorage.getItem('user') || '{}');
       if (!user.role_id) {
         router.push('/login')
@@ -55,32 +56,13 @@ const ReviewPage = () => {
       else if (user.role_id !== 1) {
         router.push('/');
       } else {
-        setLoading(false);
+        setRoleLoading(false);
       }
     };
 
     checkUserRole();
   }, [router]);
 
-  // to handle if unauthorized user try to access the page, the page will loading first
-  if (loading) {
-    return (
-      <Box
-        sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          minHeight: '100vh',
-          justifyContent: 'center',
-          alignItems: 'center',
-          background:
-            'linear-gradient(90deg, rgba(10,97,105,1) 0%, rgba(90,78,130,1) 29%, rgba(90,82,168,1) 65%, rgba(118,91,133,1) 100%)',
-        }}
-      >
-        <CircularProgress sx={{ color: '#fff' }} />
-      </Box>
-    );
-  }
-  
   useEffect(() => {
     const fetchEvents = async () => {
       try {
@@ -100,6 +82,42 @@ const ReviewPage = () => {
     }
   }, [user]);
 
+  // to handle if unauthorized user try to access the page, the page will loading first
+  if (roleLoading) {
+    return (
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          minHeight: '100vh',
+          justifyContent: 'center',
+          alignItems: 'center',
+          background:
+            'linear-gradient(90deg, rgba(10,97,105,1) 0%, rgba(90,78,130,1) 29%, rgba(90,82,168,1) 65%, rgba(118,91,133,1) 100%)',
+        }}
+      >
+        <CircularProgress sx={{ color: '#fff' }} />
+      </Box>
+    );
+  }
+  
+  if (loading) {
+    return (
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          minHeight: '100vh',
+          justifyContent: 'center',
+          alignItems: 'center',
+          background:
+            'linear-gradient(90deg, rgba(10,97,105,1) 0%, rgba(90,78,130,1) 29%, rgba(90,82,168,1) 65%, rgba(118,91,133,1) 100%)',
+        }}
+      >
+        <CircularProgress sx={{ color: '#fff' }} />
+      </Box>
+    );
+  }
 
   if (events.length === 0) {
     return (
